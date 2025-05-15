@@ -23,13 +23,15 @@ Este es un proyecto de ecommerce desarrollado con React y .NET 8, que permite ge
 
 ## 📂 Estructura del repositorio
 
-## 🧑‍💻 Realizado por:
- Daniel Eduardo - @Edu-Codes
-
-
-```bash
 Edu-codes/
 ├── MarketPlace/
 │   ├── React-MP/           # React App (Vite)
 │   └── WebApi-MP/          # API .NET Core 8
+
+
+
+## 🧑‍💻 Realizado por:
+ Daniel Eduardo - @Edu-Codes
+
+
 
