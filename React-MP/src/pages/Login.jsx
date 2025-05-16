@@ -51,7 +51,7 @@ export default function Login() {
         Swal.fire({
           icon: 'error',
           title: 'Lo sentimos',
-          text: err.mensaje
+          text: err.mensaje || err. message
         });
       } finally {
         setIsLoading(false)
