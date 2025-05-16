@@ -21,17 +21,42 @@ Este es un proyecto de ecommerce desarrollado con React y .NET 8, que permite ge
 - Gestión de pedidos
 - Administración de productos (CRUD)
 
+## 📂 Como Ejecutar:
+Este repositorio contiene un frontend en React y un backend de .NET WebAPI. Para un correcto funcionamiento asegurate de tener todas las herramientas instaladas
+
+### 🧐 Requisitos
+
+- SQL Server.
+- Tener node.js para instalar dependencias del proyecto de React. 
+- .NET SDK (Este proyecto es compatible con la version 8 de .NET)
+
+### React-MP
+- Puedes usar Visual Studio Code para abrir el proyecto
+- Abre la terminar y escribe "npm install"
+- Ejecuta npm run dev 
+
+### WebApi-MP
+- Abre la Solucion de la carpeta WebApi-MP con .net
+- instala EF Core (dotnet tool install --global dotnet -ef)
+- Configura la cadena de conexion en appsettings
+**Abre la terminal y ejecuta**
+- dotnet restore
+- dotnet ef database update
+- dotnet run
+
+🤓 Y listo.
+
+    
+## 🧑‍💻 Realizado por:
+ Daniel Eduardo - @Edu-Codes
+
+
 ## 📂 Estructura del repositorio
 
 Edu-codes/
 ├── MarketPlace/
 │   ├── React-MP/           # React App (Vite)
 │   └── WebApi-MP/          # API .NET Core 8
-
-
-
-## 🧑‍💻 Realizado por:
- Daniel Eduardo - @Edu-Codes
 
 
 
