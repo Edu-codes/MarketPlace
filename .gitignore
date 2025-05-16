@@ -4,7 +4,6 @@
 [Oo]bj/
 
 # User-specific files
-*.user
 *.suo
 *.userosscache
 *.sln.docstates
@@ -13,12 +12,7 @@
 .vs/
 .idea/
 
-# Database and debug logs
-*.dbmdl
-*.log
-
 # ASP.NET Core environment files
-appsettings*.json
 secrets.json
 
 # === React / Node.js ===
