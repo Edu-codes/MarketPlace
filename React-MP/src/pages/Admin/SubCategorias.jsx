@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { getAllSubCategorias, actualizarSubCategoria } from "../../services/subCategoria"
 import { getAllCategorias } from "../../services/categoria";
-import FormUpdateSubCat from "../../components/Button/FormUpdateSubCat";
+import FormUpdateSubCat from "../../components/Formularios/FormUpdateSubCat";
 
 
 import {

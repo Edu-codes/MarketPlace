@@ -3,7 +3,7 @@ import { getAllProductos, actualizarProducto, eliminarProducto } from "../../ser
 import { getAllCategorias } from "../../services/categoria";
 import { getAllSubCategorias } from "../../services/subCategoria";
 import { getAllUnidadMedida } from "../../services/unidadMedida";
-import FormularioProductoModal from "../../components/Button/FormUpdateProduct";
+import FormularioProductoModal from "../../components/Formularios/FormUpdateProduct";
 
 import Swal from "sweetalert2";
 

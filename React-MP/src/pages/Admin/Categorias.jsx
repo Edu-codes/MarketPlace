@@ -1,6 +1,6 @@
 import { actualizarCategorias, getAllCategorias, eliminarCategoria } from "../../services/categoria"
 import { useState, useEffect, use } from "react"
-import FormUpdateCat from "../../components/Button/FormUpdateCat";
+import FormUpdateCat from "../../components/Formularios/FormUpdateCat";
 import Swal from 'sweetalert2';
 
 import {
