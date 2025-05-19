@@ -1,11 +1,36 @@
 import React from "react";
-import { TextField, Button, Box, Typography, Link } from "@mui/material";
+import { TextField, Button, Box, Typography, Link, styled } from "@mui/material";
 import { useState, useEffect } from "react";
 import { Navigate, useNavigate } from "react-router";
 
 import Swal from "sweetalert2";
 
 import { registroUser } from "../services/acceso/RegistroUser";
+
+
+const CustomTextField = styled(TextField)(({ theme }) => ({
+    '& .MuiInputBase-input': {
+        color: '#fff',
+    },
+    '& label': {
+        color: '#fff',
+    },
+    '& label.Mui-focused': {
+        color: theme.palette.primary.main,
+    },
+    '& .MuiOutlinedInput-root': {
+        '& fieldset': {
+            borderColor: '#fff',
+        },
+        '&:hover fieldset': {
+            borderColor: theme.palette.primary.main,
+        },
+        '&.Mui-focused fieldset': {
+            borderColor: theme.palette.primary.main,
+        },
+    },
+}));
+
 
 const RegistroForm = () => {
 
@@ -87,22 +112,21 @@ const RegistroForm = () => {
                     sx={{
                         position: "absolute",
                         left: 0,
+                        height: '100%',
                         width: "100%",
                         zIndex: 0,
                         objectFit: "cover",
                         pointerEvents: "none",
+                        filter: "brightness(0.8)"
                     }}
                 />
-
-
-
 
                 <Box
                     sx={{
                         width: 400,
                         margin: "10rem auto",
                         padding: "2rem",
-                        backgroundColor: "rgba(255, 255, 255, 0.8)",
+                        backgroundColor: "rgba(43, 39, 39, 0.7)",
                         backdropFilter: "blur(10px)",
                         boxShadow: "0 0 10px rgba(0,0,0,0.1)",
                         borderRadius: "1rem",
@@ -113,12 +137,12 @@ const RegistroForm = () => {
                     <Typography
                         variant="h5"
                         align="center"
-                        sx={{ marginBottom: "1rem", color: "primary.main" }}
+                        sx={{ marginBottom: "1rem", color: "primary.main"}}
                     >
-                        Crear Cuenta
+                        REGISTRATE
                     </Typography>
 
-                    <TextField
+                    <CustomTextField
                         fullWidth
                         label="Documento"
                         name="doc"
@@ -127,7 +151,7 @@ const RegistroForm = () => {
                         margin="normal"
                         required
                     />
-                    <TextField
+                    <CustomTextField
                         fullWidth
                         label="Nombre"
                         name="nombre"
@@ -137,7 +161,7 @@ const RegistroForm = () => {
                         required
                     />
 
-                    <TextField
+                    <CustomTextField
                         fullWidth
                         label="Apellido"
                         name="apellido"
@@ -146,7 +170,7 @@ const RegistroForm = () => {
                         margin="normal"
                         required
                     />
-                    <TextField
+                    <CustomTextField
                         fullWidth
                         label="Direccion"
                         name="direccion"
@@ -155,7 +179,7 @@ const RegistroForm = () => {
                         margin="normal"
                         required
                     />
-                    <TextField
+                    <CustomTextField
                         fullWidth
                         label="Telefono"
                         name="telefono"
@@ -165,7 +189,7 @@ const RegistroForm = () => {
                         required
                     />
 
-                    <TextField
+                    <CustomTextField
                         fullWidth
                         label="Contraseña"
                         type="password"
@@ -176,7 +200,7 @@ const RegistroForm = () => {
                         required
                     />
 
-                    <TextField
+                    <CustomTextField
                         fullWidth
                         label="Confirma Contraseña"
                         type="password"
@@ -207,7 +231,7 @@ const RegistroForm = () => {
                     <Typography
                         variant="body2"
                         align="center"
-                        sx={{ marginTop: "1rem", color: "text.secondary" }}
+                        sx={{ marginTop: "1rem", color: "text.primaryLight" }}
                     >
                         Ya tienes cuenta?{" "}
                         <Link href="/" underline="hover" sx={{ fontWeight: 500 }}>

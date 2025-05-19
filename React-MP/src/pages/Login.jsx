@@ -5,16 +5,46 @@ import { loginUser } from "../services/acceso/AccesoLogin";
 import { MyContext } from "../context/Context";
 import { useContext } from 'react';
 
-import { TextField, Button, Box, Typography, Link } from "@mui/material";
+
+import { TextField, Button, Box, Typography, Link, styled } from "@mui/material";
 import { LinearIndeterminate } from "../components/Utilidades/Progress";
 
 
 import Swal from "sweetalert2";
 
 
+
+const CustomTextField = styled(TextField)(({ theme }) => ({
+
+  
+  '& .MuiInputBase-input': {
+    color: '#fff',
+  },
+  '& label': {
+    color: "#fff",
+  },
+  '& label.Mui-focused': {
+    color: theme.palette.primary.main,
+  },
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: '#fff',
+    },
+    '&:hover fieldset': {
+      borderColor: theme.palette.primary.main,
+    },
+
+  },
+}));
+
+
+
 export default function Login() {
+
+
+
   const [doc, setDoc] = useState('');
-  const [password, setpassword] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false)
 
   const { setUser } = useContext(MyContext);
@@ -31,6 +61,13 @@ export default function Login() {
         const { token, user } = await loginUser(doc, password);
 
         if (!user || !user.rolId) {
+
+          Swal.fire({
+            icon: 'question ',
+            title: 'Lo sentimos',
+            text: 'Si estas registrado?',
+          });
+
           console.error("El usuario o su rol no están definidos");
           return;
         }
@@ -51,7 +88,7 @@ export default function Login() {
         Swal.fire({
           icon: 'error',
           title: 'Lo sentimos',
-          text: err.mensaje || err. message
+          text: err.mensaje || err.message
         });
       } finally {
         setIsLoading(false)
@@ -84,6 +121,7 @@ export default function Login() {
             zIndex: 0,
             objectFit: "cover",
             pointerEvents: "none",
+            filter: "brightness(0.8)"
           }}
         />
 
@@ -93,7 +131,7 @@ export default function Login() {
             width: 400,
             margin: "10rem auto",
             padding: "2rem",
-            backgroundColor: "rgba(255, 255, 255, 0.7)",
+            backgroundColor: "rgba(43, 39, 39, 0.7)",
             backdropFilter: "blur(10px)",
             boxShadow: "0 0 10px rgba(0,0,0,0.1)",
             borderRadius: "1rem",
@@ -110,7 +148,7 @@ export default function Login() {
 
           </Typography>
 
-          <TextField
+          <CustomTextField
             fullWidth
             label="Documento"
             type="text"
@@ -121,13 +159,13 @@ export default function Login() {
             required
           />
 
-          <TextField
+          <CustomTextField
             fullWidth
             label="Contraseña"
             type="password"
             name="pass"
             value={password}
-            onChange={(e) => setpassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             margin="normal"
             required
           />
@@ -144,12 +182,13 @@ export default function Login() {
           <Button
             fullWidth
             variant="contained"
-            color="primary"
             sx={{
+
               padding: "1rem",
               borderRadius: "0.5rem",
               "&:hover": {
                 backgroundColor: "dark.main",
+                color: "text.primaryLight",
               },
               marginTop: "1rem",
             }}
@@ -161,7 +200,8 @@ export default function Login() {
           <Typography
             variant="body2"
             align="center"
-            sx={{ marginTop: "1rem", color: "text.secondary" }}
+
+            sx={{ marginTop: "1rem", color: "text.primaryLight" }}
           >
             ¿No tienes cuenta?{" "}
             <Link href="/Registro" underline="hover" sx={{ fontWeight: 500 }}>
