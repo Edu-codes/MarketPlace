@@ -28,63 +28,69 @@ export default function CardProducto({ precio, nombre, product }) {
     const [cantidad, setCantidad] = useState(0)
 
 
+    //Renderizamos la cantidad
     useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    if (!user || !user.doc) return;
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        if (!user || !user.doc) return;
 
-    const key = `cart_${user.doc}`;
-    const carrito = JSON.parse(localStorage.getItem(key)) || [];
+        const key = `cart_${user.doc}`;
+        const carrito = JSON.parse(localStorage.getItem(key)) || [];
 
-    const productoEnCarrito = carrito.find(item => item.id === product.id); // usa tu campo clave
+        const productoEnCarrito = carrito.find(item => item.id === product.id);
 
-    if (productoEnCarrito) {
-        setCantidad(productoEnCarrito.cantidad);
-    } else {
-        setCantidad(0); // valor por defecto si no estaba
-    }
+        if (productoEnCarrito) {
+            setCantidad(productoEnCarrito.cantidad);
+        } else {
+            setCantidad(0); 
+        }
 
-}, [product.id]);
-
-
-
-   const handleAgregarAlCarrito = () => {
-    const cantidadFinal = cantidad === 0 ? 1 : cantidad;
-
-    setCantidad(cantidadFinal)
-
-
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    if (!user || !user.doc) {
-        console.error("Usuario no válido o no autenticado");
-        return;
-    }
-
-    const key = `cart_${user.doc}`;
-    const carritoActual = JSON.parse(localStorage.getItem(key)) || [];
-
-    const indexExistente = carritoActual.findIndex(item => item.id === product.id);
-
-    let nuevoCarrito;
-
-    if (indexExistente !== -1) {
-        // Ya existe → actualizamos cantidad
-        carritoActual[indexExistente].cantidad += cantidadFinal;
-        nuevoCarrito = carritoActual;
-    } else {
-        // No existe → agregamos nuevo
-        const items = {
-            ...product,
-            cantidad: cantidadFinal,
-        };
-        nuevoCarrito = [...carritoActual, items];
-    }
-
-    localStorage.setItem(key, JSON.stringify(nuevoCarrito));
-    console.log("Carrito actualizado:", nuevoCarrito);
-};
+    }, [product.id]);
 
 
 
+    const handleAgregarAlCarrito = () => {
+
+        let cantidadFinal = cantidad === -1 ? 1 : cantidad;
+
+
+        setCantidad(cantidadFinal)
+
+
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        if (!user || !user.doc) {
+            console.error("Usuario no válido o no autenticado");
+            return;
+        }
+
+        const key = `cart_${user.doc}`;
+        const carritoActual = JSON.parse(localStorage.getItem(key)) || [];
+
+        const indexExistente = carritoActual.findIndex(item => item.id === product.id);
+
+        let nuevoCarrito;
+        if (indexExistente !== -1) {
+            // Ya existe -> actualizamos cantidad
+            carritoActual[indexExistente].cantidad = cantidadFinal;
+            nuevoCarrito = carritoActual;
+        } else {
+            // No existe -< agregamos nuevo
+            const items = {
+                ...product,
+                cantidad: cantidadFinal,
+            };
+            nuevoCarrito = [...carritoActual, items];
+        }
+
+
+        //Evitamos que se agregue al carrito un prodcuto sin cantidad
+        if (cantidadFinal !== -1 && cantidadFinal !== 0) {
+            localStorage.setItem(key, JSON.stringify(nuevoCarrito));
+        }
+        console.log("Carrito actualizado:", nuevoCarrito);
+
+        // 🔔 Dispara un evento personalizado
+        window.dispatchEvent(new Event('carritoActualizado'));
+    };
 
 
 
