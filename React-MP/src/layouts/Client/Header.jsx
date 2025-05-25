@@ -1,6 +1,8 @@
 import React from 'react';
 import { AppBar, Box, Typography, IconButton, InputBase, Link as RouterLink } from '@mui/material';
 import MuiLink from '@mui/material/Link';
+import Badge from '@mui/material/Badge';
+import { useState, useEffect } from 'react';
 
 import StoreIcon from '@mui/icons-material/Store';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -11,7 +13,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import BtnLogOut from '../../components/Button/BtnLogOut';
 
 import { useNavigate } from 'react-router';
-
+import BtnCarrito from '../../components/Button/BtnCarrito';
 
 
 
@@ -60,9 +62,8 @@ export default function HeaderCliente() {
                             {/* <MuiLink href="registro.html" underline="none">
                               <PersonIcon  sx={{ width: "2rem", height: "2rem" }}/>
                             </MuiLink> */}
-                            <ShoppingCartIcon sx={{ width: "2rem", height: "2rem" }} />
-                            {/* <Typography variant="body1">Tu cesta</Typography>
-                                <Typography variant="body2">(0)</Typography> */}
+
+                        <BtnCarrito/>
                         </Box>
                     </Box>
                 </Box>
@@ -130,7 +131,7 @@ export default function HeaderCliente() {
                                     color: '#fff'
                                 },
                             }}>Descuentos</MuiLink></li>
-                            <li><MuiLink onClick={()=>handleNavigation('Categorias')} underline="none" color="text.primary" sx={{
+                            <li><MuiLink onClick={() => handleNavigation('Categorias')} underline="none" color="text.primary" sx={{
                                 display: 'flex',
                                 alignItems: 'center',
                                 height: '100%',

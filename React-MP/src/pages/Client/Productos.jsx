@@ -33,13 +33,14 @@ export default function ProductosCliente() {
 
             <Box
                 sx={{
-                    padding: '3rem',
+                    padding: '2rem',
                     display: 'grid',
                     gridTemplateColumns: { md: 'repeat(3, 1fr)', sm: 'repeat(2, 1fr)', xs: 'repeat(1, 1fr)', lg: 'repeat(4, 1fr)' },
-                    gap: '3rem',
+                    gap: '1rem',
                 }}
             >
                 {productos.map((product) => (
+                    
                     <CardProducto
                         key={product.id}
                         precio={product.precio}
