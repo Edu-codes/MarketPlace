@@ -16,7 +16,7 @@ import Swal from "sweetalert2";
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
 
-  
+
   '& .MuiInputBase-input': {
     color: '#fff',
   },
@@ -60,10 +60,10 @@ export default function Login() {
       try {
         const { token, user } = await loginUser(doc, password);
 
-        if (!user || !user.rolId) {
+        if (!user || !user.roles) {
 
           Swal.fire({
-            icon: 'question ',
+            icon: 'question',
             title: 'Lo sentimos',
             text: 'Si estas registrado?',
           });
@@ -75,12 +75,15 @@ export default function Login() {
         // Guardar usuario y token en contexto (MyContext se encarga de sessionStorage)
         setUser({ ...user, token }); // Si deseas puedes guardar token dentro del user
 
-        // Redirigir según el rol
-        if (user.rolId === 'Admin') {
+        if (user.roles?.includes('Admin')) {
           navigate('/Admin/Inicio');
-        } else {
+        } else if (user.roles?.includes('Cliente')) {
           navigate('/Client/Inicio');
         }
+        //  else {
+        //   navigate('/Unauthorized'); 
+        // }
+
 
       } catch (err) {
         console.error("Error en login:", err);

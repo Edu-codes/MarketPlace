@@ -1,5 +1,4 @@
-// src/pages/Unauthorized.jsx
-const Inautorizado = () => {
+const Unauthorized = () => {
   return (
     <div style={{ padding: '2rem', textAlign: 'center' }}>
       <h1>🚫 Acceso denegado</h1>
@@ -8,4 +7,4 @@ const Inautorizado = () => {
   );
 };
 
-export default Inautorizado;
+export default Unauthorized;

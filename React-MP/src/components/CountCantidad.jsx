@@ -1,7 +1,7 @@
 import { Button, TextField, Box } from "@mui/material"
 import { useState } from "react"
 
-export function CountCantidad({cantidad, setCantidad}) {
+export function CountCantidad({ cantidad, setCantidad }) {
 
 
     const handleSuma = () => {
@@ -32,15 +32,17 @@ export function CountCantidad({cantidad, setCantidad}) {
 
                 <Box >
                     <Button
-                        variant="contained"
                         sx={{
                             minWidth: 30,
                             height: 55,
                             borderTopRightRadius: 0,
                             borderBottomRightRadius: 0,
+                            // borderBottomLeftRadius: 50,
+                            // borderTopLeftRadius: 50,
                             px: 0,
                             '&:hover': {
-                                backgroundColor: 'primary.dark',
+                                backgroundColor: 'primary.main',
+                                color:'#fff'
                             },
                         }}
                         onClick={handleResta}>
@@ -67,13 +69,13 @@ export function CountCantidad({cantidad, setCantidad}) {
 
                 <Box>
                     <Button
-                        variant="contained"
                         sx={{
                             minWidth: 30,
                             height: 55,
-                            backgroundColor: 'primary.main',
                             borderTopLeftRadius: 0,
                             borderBottomLeftRadius: 0,
+                            borderBottomRightRadius: 50,
+                            borderTopRightRadius: 50,
                             px: 0,
                             '&:hover': {
                                 backgroundColor: 'primary.dark',

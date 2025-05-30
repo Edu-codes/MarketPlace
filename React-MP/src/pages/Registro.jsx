@@ -39,6 +39,7 @@ const RegistroForm = () => {
         nombre: "",
         apellido: "",
         direccion: "",
+        email: "",
         telefono: "",
         pass: "",
         pass2: ""
@@ -137,7 +138,7 @@ const RegistroForm = () => {
                     <Typography
                         variant="h5"
                         align="center"
-                        sx={{ marginBottom: "1rem", color: "primary.main"}}
+                        sx={{ marginBottom: "1rem", color: "primary.main" }}
                     >
                         REGISTRATE
                     </Typography>
@@ -175,6 +176,16 @@ const RegistroForm = () => {
                         label="Direccion"
                         name="direccion"
                         value={formData.direccion}
+                        onChange={handleChange}
+                        margin="normal"
+                        required
+                    />
+                    <CustomTextField
+                        fullWidth
+                        type="email"
+                        label="Correo"
+                        name="email"
+                        value={formData.email}
                         onChange={handleChange}
                         margin="normal"
                         required
