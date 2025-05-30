@@ -24,12 +24,6 @@ Este es un proyecto de ecommerce desarrollado con React y .NET 8, que permite ge
 ## 📂 Como Ejecutar:
 Este repositorio contiene un frontend en React y un backend de .NET WebAPI. Para un correcto funcionamiento asegurate de tener todas las herramientas instaladas
 
-## ⚙️ Inicializar Base de Datos
-
-Después de clonar el repositorio, ejecutá los siguientes comandos:
-
-```bash
-dotnet ef database update
 
 ### 🧐 Requisitos
 
@@ -58,6 +52,12 @@ dotnet ef database update
  Daniel Eduardo - @Edu-Codes
 
 
+## ⚙️ Inicializar Base de Datos
+
+Después de clonar el repositorio, ejecutá los siguientes comandos:
+
+```bash
+dotnet ef database update
 ## 📂 Estructura del repositorio
 
 Edu-codes/
