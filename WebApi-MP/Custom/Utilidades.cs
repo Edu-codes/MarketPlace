@@ -39,10 +39,9 @@ namespace WebApi_MP.Custom
             var userClaims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier,modelo.Doc.ToString()),
-                new Claim(ClaimTypes.Role, modelo.Rol.NombreRol),
-                 new Claim(ClaimTypes.Name, $"{modelo.Nombre} {modelo.Apellido}")
+                new Claim(ClaimTypes.Name, $"{modelo.Nombre} {modelo.Apellido}")
             };
-
+            
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configurarion["jwt:key"]!));
             var credentials = new SigningCredentials(securityKey,SecurityAlgorithms.HmacSha256Signature);
 

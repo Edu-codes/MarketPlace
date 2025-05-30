@@ -16,12 +16,12 @@ namespace WebApi_MP.Controllers
     [ApiController]
     public class AccesoController : ControllerBase
     {
-        private readonly MarketPlaceContext _marketPlaceContext;
+        private readonly MarketPlace2Context _marketPlace2Context;
         private readonly Utilidades _utilidades;
 
-        public AccesoController(MarketPlaceContext marketPlaceContext, Utilidades utilidades)
+        public AccesoController(MarketPlace2Context marketPlace2Context, Utilidades utilidades)
         {
-            _marketPlaceContext = marketPlaceContext;
+            _marketPlace2Context = marketPlace2Context;
             _utilidades = utilidades;
         }
 
@@ -36,14 +36,20 @@ namespace WebApi_MP.Controllers
                 Doc = objeto.Doc,
                 Nombre = objeto.Nombre,
                 Apellido = objeto.Apellido,
+                Email = objeto.Email,
                 Direccion = objeto.Direccion,
                 Pass = _utilidades.encriptarSHA256(objeto.Pass!),
-                Telefono = objeto.Telefono,
-                RolId = 2
+                Telefono = objeto.Telefono
 
             };
-            var usuarioExiste = await _marketPlaceContext.Usuarios.AnyAsync(u => u.Doc == modeloUsuario.Doc);
+            var usuarioExiste = await _marketPlace2Context.Usuarios.AnyAsync(u => u.Doc == modeloUsuario.Doc);
 
+
+            var userRol = new UserRole
+            {
+               Doc = objeto.Doc,
+               RolId = 2,       
+            };
             if (usuarioExiste)
             {
                 return Conflict(new { status = 409, mensaje = "El usuario ya tiene una cuenta registrada" });
@@ -51,8 +57,10 @@ namespace WebApi_MP.Controllers
 
             try
             {
-                _marketPlaceContext.Usuarios.Add(modeloUsuario);
-                await _marketPlaceContext.SaveChangesAsync();
+                _marketPlace2Context.Usuarios.Add(modeloUsuario);
+                _marketPlace2Context.UserRoles.Add(userRol);
+
+                await _marketPlace2Context.SaveChangesAsync();
                 return Ok(new {status=200, mensaje = "Usuario registrado exitosamente" });
             }
             catch (Exception ex)
@@ -64,10 +72,12 @@ namespace WebApi_MP.Controllers
         [HttpPost]
         [Route("Login")]
 
-        public async Task<IActionResult>Login(LoginDTO objeto)
+        public async Task<IActionResult> Login(LoginDTO objeto)
         {
-            var usuarioEncontrado = await _marketPlaceContext.Usuarios
-                .Include(u => u.Rol)
+
+            var usuarioEncontrado = await _marketPlace2Context.Usuarios
+                .Include(u => u.UserRoles)
+                 .ThenInclude(ur => ur.Rol)
                 .Where(u =>
                 u.Doc == objeto.Doc &&
                 u.Pass == _utilidades.encriptarSHA256(objeto.Password)
@@ -79,21 +89,23 @@ namespace WebApi_MP.Controllers
             }
             else
             {
-                
+
                 var token = _utilidades.generarJWT(usuarioEncontrado);
+                var roles = usuarioEncontrado.UserRoles.Select(ur => ur.Rol.NombreRol).ToList();
 
                 var userData = new UsuarioDTO
                 {
                     Doc = usuarioEncontrado.Doc,
                     Nombre = usuarioEncontrado.Nombre,
                     Apellido = usuarioEncontrado.Apellido,
+                    Email = usuarioEncontrado.Email,
                     Direccion = usuarioEncontrado.Direccion,
                     Telefono = usuarioEncontrado.Telefono,
-                    RolId = usuarioEncontrado.Rol.NombreRol
+                    Roles = roles
                 };
 
 
-                return StatusCode(StatusCodes.Status200OK, new { isSuccess = true, token, user = userData});
+                return StatusCode(StatusCodes.Status200OK, new { isSuccess = true, token, user = userData });
 
             }
         }

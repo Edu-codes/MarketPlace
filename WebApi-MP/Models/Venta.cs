@@ -7,13 +7,17 @@ public partial class Venta
 {
     public int Id { get; set; }
 
-    public int? IdProducto { get; set; }
+    public DateOnly FechaVenta { get; set; }
 
-    public int? IdUsuario { get; set; }
+    public int Total { get; set; }
 
-    public DateOnly? Fecha { get; set; }
+    public int Doc { get; set; }
 
-    public virtual Producto? IdProductoNavigation { get; set; }
+    public int? EstadoId { get; set; }
 
-    public virtual Usuario? IdUsuarioNavigation { get; set; }
+    public virtual ICollection<DetalleVenta> DetalleVenta { get; set; } = new List<DetalleVenta>();
+
+    public virtual Usuario DocNavigation { get; set; } = null!;
+
+    public virtual Estado? Estado { get; set; }
 }

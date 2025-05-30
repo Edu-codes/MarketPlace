@@ -14,11 +14,11 @@ namespace WebApi_MP.Controllers
     public class ProductoController : ControllerBase
     {
 
-        private readonly MarketPlaceContext _marketPlaceContext;
+        private readonly MarketPlace2Context _marketPlace2Context;
 
-        public ProductoController(MarketPlaceContext marketPlaceContext)
+        public ProductoController(MarketPlace2Context marketPlace2Context)
         {
-            _marketPlaceContext = marketPlaceContext;
+            _marketPlace2Context = marketPlace2Context;
 
         }
 
@@ -29,22 +29,22 @@ namespace WebApi_MP.Controllers
 
         public async Task<IActionResult> Lista()
         {
-            var lista = await _marketPlaceContext.Productos
-                .Include(p => p.Subcat)
-                .Include(p => p.Unidad)
-                .Include(p => p.IdCatNavigation)
+
+            var lista = await _marketPlace2Context.Productos
+                .Include(p => p.SubCategoria)
+                .Include(p => p.UniMedId)
+                .Include(p => p.Estado)
+
                 .Select(p => new ProductoDTO
                 {
-                    Id = p.Id,
+                    Referencia = p.Referencia,
                     NombrePro = p.NombrePro,
                     Precio = p.Precio,
-                    Cantidad = p.Cantidad,
-                    IdCat = p.IdCat,
-                    UnidadId = p.UnidadId,
-                    SubcatId = p.SubcatId,
-                    NombreCat = p.IdCatNavigation.NombreCat,
-                    UnidadMedida = p.Unidad.Nombre,
-                    NombreSubCat = p.Subcat.Nombre
+                    Stock = p.Stock,
+                    NameSubCategoria = p.SubCategoria!.NombreSubCat,
+                    NameUniMed = p.UniMed.NombreUniMed,
+                    NameEstado = p.Estado!.Nombre,
+                    Descripcion = p.Descripcion,
                 })
                 .ToListAsync();
 
@@ -62,7 +62,7 @@ namespace WebApi_MP.Controllers
         public async Task<ActionResult<Producto>> GetProductoId(int id)
         {
 
-            var producto = await _marketPlaceContext.Productos.FindAsync(id);
+            var producto = await _marketPlace2Context.Productos.FindAsync(id);
 
             if (producto == null)
             {
@@ -83,19 +83,21 @@ namespace WebApi_MP.Controllers
 
         public async Task<ActionResult<Producto>> ProductoPorSubCategoria(int subcatId)
         {
-            var producto = _marketPlaceContext.Productos
-                                .Include(p => p.Subcat)
-                .Include(p => p.Unidad)
-                .Include(p => p.IdCatNavigation)
-                .Where(u => u.SubcatId == subcatId)
+            var producto = _marketPlace2Context.Productos
+                .Include(p => p.SubCategoria)
+                .Include(p => p.UniMed)
+                .Include(p => p.Estado)
+                .Where(u => u.SubCategoriaId == subcatId)
                 .Select(u => new ProductoDTO
                 {
+                    Referencia = u.Referencia,
                     NombrePro = u.NombrePro,
                     Precio = u.Precio,
-                    Cantidad = u.Cantidad,
-                    NombreCat = u.IdCatNavigation.NombreCat,
-                    UnidadMedida = u.Unidad.Nombre,
-                    NombreSubCat = u.Subcat.Nombre
+                    Stock = u.Stock,
+                    NameSubCategoria = u.SubCategoria!.NombreSubCat,
+                    NameUniMed = u.UniMed.NombreUniMed,
+                    NameEstado = u.Estado!.Nombre,
+                    Descripcion = u.Descripcion,
                 });
 
             if (!producto.Any())
@@ -104,30 +106,30 @@ namespace WebApi_MP.Controllers
         }
 
 
-        [HttpGet]
-        [Route("ProductoPorCategoria")]
-        public async Task<ActionResult<IEnumerable<ProductoDTO>>> ProductoPorCategoria(int idCat)
-        {
-            var producto = await _marketPlaceContext.Productos
-                .Where(u => u.IdCat == idCat)
-                .Select(u => new ProductoDTO
-                {
-                    NombrePro = u.NombrePro,
-                    Precio = u.Precio,
-                    Cantidad = u.Cantidad,
-                    NombreCat = u.IdCatNavigation.NombreCat,
-                    UnidadMedida = u.Unidad.Nombre,
-                    NombreSubCat = u.Subcat.Nombre
+        //[HttpGet]
+        //[Route("ProductoPorCategoria")]
+        //public async Task<ActionResult<IEnumerable<ProductoDTO>>> ProductoPorCategoria(int idCat)
+        //{
+        //    var producto = await _marketPlace2Context.Productos
+        //        .Where(u => u.SubCategoriaId == idCat)
+        //        .Select(u => new ProductoDTO
+        //        {
+        //            NombrePro = u.NombrePro,
+        //            Precio = u.Precio,
+        //            Cantidad = u.Cantidad,
+        //            NombreCat = u.IdCatNavigation.NombreCat,
+        //            UnidadMedida = u.Unidad.Nombre,
+        //            NombreSubCat = u.Subcat.Nombre
 
 
-                }).ToListAsync();
+        //        }).ToListAsync();
 
-            if (!producto.Any())
-                return NotFound("No hay productos para esa categoría.");
+        //    if (!producto.Any())
+        //        return NotFound("No hay productos para esa categoría.");
 
-            return Ok(producto);
+        //    return Ok(producto);
 
-        }
+        //}
 
         [HttpGet("buscar")]
         public async Task<ActionResult<IEnumerable<UsuarioDTO>>> BuscarPorNombre([FromQuery] string nombrePro)
@@ -135,12 +137,12 @@ namespace WebApi_MP.Controllers
             if (string.IsNullOrWhiteSpace(nombrePro))
                 return BadRequest("Debes proporcionar un nombre.");
 
-            var productos = await _marketPlaceContext.Productos
+            var productos = await _marketPlace2Context.Productos
                 .Where(u => u.NombrePro.Contains(nombrePro))
                 .Select(u => new ProductoDTO
                 {
                     NombrePro = u.NombrePro,
-                    Id = u.Id
+                    Referencia = u.Referencia
                 })
                 .ToListAsync();
 
@@ -161,16 +163,17 @@ namespace WebApi_MP.Controllers
             {
                 NombrePro = objeto.NombrePro,
                 Precio = objeto.Precio,
-                Cantidad = objeto.Cantidad,
-                IdCat = objeto.IdCat,
-                UnidadId = objeto.UnidadId,
-                SubcatId = objeto.SubcatId
+                Stock = objeto.Stock,
+                SubCategoriaId = objeto.SubCategoriaId,
+                UniMedId = objeto.UniMedId,
+                EstadoId = objeto.EstadoId,
+                Descripcion = objeto.Descripcion
             };
 
             try
             {
-                _marketPlaceContext.Productos.Add(modeloProducto);
-                await _marketPlaceContext.SaveChangesAsync();
+                _marketPlace2Context.Productos.Add(modeloProducto);
+                await _marketPlace2Context.SaveChangesAsync();
                 return Ok(new { mensaje = "Producto registrado exitosamente" });
             }
             catch (Exception ex)
@@ -184,7 +187,7 @@ namespace WebApi_MP.Controllers
         [Route("ActualizarProducto/{id}")]
         public async Task<IActionResult> ActualizarProducto(int id, ProductoDTO objeto)
         {
-            var productoExistente = await _marketPlaceContext.Productos.FindAsync(id);
+            var productoExistente = await _marketPlace2Context.Productos.FindAsync(id);
 
             if (productoExistente == null)
             {
@@ -192,16 +195,18 @@ namespace WebApi_MP.Controllers
             }
 
             // Actualizar los campos
+            productoExistente.Referencia = objeto.Referencia;
             productoExistente.NombrePro = objeto.NombrePro;
             productoExistente.Precio = objeto.Precio;
-            productoExistente.Cantidad = objeto.Cantidad;
-            productoExistente.IdCat = objeto.IdCat;
-            productoExistente.UnidadId = objeto.UnidadId;
-            productoExistente.SubcatId = objeto.SubcatId;
+            productoExistente.Stock = objeto.Stock;
+            productoExistente.SubCategoriaId = objeto.SubCategoriaId;
+            productoExistente.UniMedId = objeto.UniMedId;
+            productoExistente.EstadoId = objeto.EstadoId;
+            productoExistente.Descripcion = objeto.Descripcion;
 
             try
             {
-                await _marketPlaceContext.SaveChangesAsync();
+                await _marketPlace2Context.SaveChangesAsync();
                 return Ok(new { mensaje = "Producto actualizado exitosamente" });
             }
             catch (Exception ex)
@@ -214,15 +219,15 @@ namespace WebApi_MP.Controllers
         [Route("EliminarProducto")]
         public async Task<IActionResult> EliminarProducto(int id)
         {
-            var producto = await _marketPlaceContext.Productos.FindAsync(id);
+            var producto = await _marketPlace2Context.Productos.FindAsync(id);
 
             if (producto == null)
             {
                 return NotFound();
             }
 
-            _marketPlaceContext.Productos.Remove(producto);
-            await _marketPlaceContext.SaveChangesAsync();
+            _marketPlace2Context.Productos.Remove(producto);
+            await _marketPlace2Context.SaveChangesAsync();
 
             return NoContent(); // 204
         }

@@ -12,11 +12,11 @@ namespace WebApi_MP.Controllers
     public class UnidadesMedidumController : ControllerBase
     {
 
-        private readonly MarketPlaceContext _marketPlaceContext;
+        private readonly MarketPlace2Context _marketPlace2Context;
 
-        public UnidadesMedidumController (MarketPlaceContext marketPlaceContext)
+        public UnidadesMedidumController (MarketPlace2Context marketPlace2Context)
         {
-            _marketPlaceContext = marketPlaceContext;
+            _marketPlace2Context = marketPlace2Context;
         }
 
         [HttpGet]
@@ -24,11 +24,11 @@ namespace WebApi_MP.Controllers
 
         public async Task<IActionResult> Lista()
         {
-            var lista = await _marketPlaceContext.UnidadesMedida
+            var lista = await _marketPlace2Context.UnidadesMedida
                 .Select(x => new UnidadesMedidumDTO
                 {
                     Id = x.Id,
-                    NombreUnidadMedida = x.Nombre,
+                    NombreUnidadMedida = x.NombreUniMed,
                 }).ToListAsync();
 
             if(lista == null || !lista.Any()){

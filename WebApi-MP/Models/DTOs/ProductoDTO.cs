@@ -3,24 +3,27 @@
     public class ProductoDTO
     {
 
-        public int Id { get; set; }
+        public string Referencia { get; set; } = null!;
 
-        public string? NombrePro { get; set; }
+        public string NombrePro { get; set; } = null!;
 
-        public int? Precio { get; set; }
+        public int Precio { get; set; }
 
-        public int? Cantidad { get; set; }
+        public int Stock { get; set; }
 
-        public int? IdCat { get; set; }
+        public string NameSubCategoria { get; set; } = null!;
+        
+        public int SubCategoriaId { get; set; }
 
-        public int? UnidadId { get; set; }
+        public string NameUniMed { get; set; } = null!;
+        
+        public int UniMedId { get; set; }
 
-        public int? SubcatId { get; set; }
+        public string NameEstado { get; set; } = null!; 
+        
+        public int EstadoId { get; set; }
 
-        public string? NombreCat { get; set; }
+        public string? Descripcion { get; set; }
 
-        public string? UnidadMedida { get; set; }
-
-        public string? NombreSubCat { get; set; }
     }
 }

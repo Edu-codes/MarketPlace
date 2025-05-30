@@ -5,25 +5,31 @@ namespace WebApi_MP.Models;
 
 public partial class Producto
 {
-    public int Id { get; set; }
+    public string Referencia { get; set; } = null!;
 
-    public string? NombrePro { get; set; }
+    public string NombrePro { get; set; } = null!;
 
-    public int? Precio { get; set; }
+    public int Precio { get; set; }
 
-    public int? Cantidad { get; set; }
+    public int Stock { get; set; }
 
-    public int? IdCat { get; set; }
+    public int SubCategoriaId { get; set; }
 
-    public int? UnidadId { get; set; }
+    public int UniMedId { get; set; }
 
-    public int? SubcatId { get; set; }
+    public int? EstadoId { get; set; }
 
-    public virtual Categoria? IdCatNavigation { get; set; }
+    public string? Descripcion { get; set; }
 
-    public virtual Subcategoria? Subcat { get; set; }
+    public virtual SubCategoria? SubCategoria { get; set; }
 
-    public virtual UnidadesMedidum? Unidad { get; set; }
+    public virtual ICollection<DetalleVenta> DetalleVenta { get; set; } = new List<DetalleVenta>();
 
-    public virtual ICollection<Venta> Venta { get; set; } = new List<Venta>();
+    public virtual Estado? Estado { get; set; }
+
+    public virtual ICollection<Favorito> Favoritos { get; set; } = new List<Favorito>();
+
+    public virtual ICollection<Promocione> Promociones { get; set; } = new List<Promocione>();
+
+    public virtual UnidadesMedidum UniMed { get; set; } = null!;
 }

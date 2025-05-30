@@ -11,11 +11,11 @@ namespace WebApi_MP.Controllers
     public class SubCategoriaController : ControllerBase
     {
 
-        private readonly MarketPlaceContext _marketPlaceContext;
+        private readonly MarketPlace2Context _marketPlace2Context;
 
-        public SubCategoriaController(MarketPlaceContext marketPlaceContext)
+        public SubCategoriaController(MarketPlace2Context marketPlace2Context)
         {
-            _marketPlaceContext = marketPlaceContext;
+            _marketPlace2Context = marketPlace2Context;
         }
 
         [HttpPost]
@@ -23,16 +23,16 @@ namespace WebApi_MP.Controllers
 
         public async Task<IActionResult> CrearSubCat(SubCategoriaDTO objeto)
         {
-            var modeloSubCat = new Subcategoria
+            var modeloSubCat = new SubCategoria
             {
-                Nombre = objeto.NombreSubCat,
-                IdCat = objeto.idCat,
+                NombreSubCat = objeto.NombreSubCat,
+                CategoriaId = objeto.idCat,
             };
 
             try
             {
-                _marketPlaceContext.Add(modeloSubCat);
-                await _marketPlaceContext.SaveChangesAsync();
+                _marketPlace2Context.Add(modeloSubCat);
+                await _marketPlace2Context.SaveChangesAsync();
 
                 return Ok(new { mensaje = "SubCategoria registrada exitosamente" });
             }
@@ -49,14 +49,14 @@ namespace WebApi_MP.Controllers
 
         public async Task<IActionResult> Lista()
         {
-            var lista = await _marketPlaceContext.Subcategorias
-                .Include(x => x.IdCatNavigation)
+            var lista = await _marketPlace2Context.SubCategorias
+                .Include(x => x.CategoriaId)
                 .Select(x => new SubCategoriaDTO
                 {
                     Id = x.Id,
-                    NombreSubCat = x.Nombre,
-                    idCat = x.IdCat,
-                    NombreCat = x.IdCatNavigation.NombreCat
+                    NombreSubCat = x.NombreSubCat,
+                    idCat = x.CategoriaId,
+                    NombreCat = x.Categoria.NombreCat,
                 }).ToListAsync();
 
             if(lista == null || !lista.Any())
@@ -73,20 +73,20 @@ namespace WebApi_MP.Controllers
 
         public async Task<IActionResult> ActualizarSubCat(int id, SubCategoriaDTO objeto)
         {
-            var SubCatRegistrada = await _marketPlaceContext.Subcategorias.FindAsync(id);
+            var SubCatRegistrada = await _marketPlace2Context.SubCategorias.FindAsync(id);
 
             if (SubCatRegistrada == null)
             {
                 return NotFound("SubCategoria no encontrado");
             }
 
-            SubCatRegistrada.Nombre = objeto.NombreSubCat;
-            SubCatRegistrada.IdCat = objeto.idCat;
+            SubCatRegistrada.NombreSubCat = objeto.NombreSubCat;
+            SubCatRegistrada.CategoriaId = objeto.idCat;
 
 
             try
             {
-                await _marketPlaceContext.SaveChangesAsync();
+                await _marketPlace2Context.SaveChangesAsync();
                 return Ok(new { mensaje = "SubCategoria Actualizada Correctamente" });
             }
             catch(Exception ex)
@@ -100,14 +100,14 @@ namespace WebApi_MP.Controllers
 
         public async Task<IActionResult> EliminarSubCat(int id)
         {
-            var SubCat = await _marketPlaceContext.Subcategorias.FindAsync(id);
+            var SubCat = await _marketPlace2Context.SubCategorias.FindAsync(id);
 
             if(SubCat == null){
                 return NotFound("No se encontro esta Subcategoria para eliminar");
             }
 
-            _marketPlaceContext.Subcategorias.Remove(SubCat);
-            await _marketPlaceContext.SaveChangesAsync();
+            _marketPlace2Context.SubCategorias.Remove(SubCat);
+            await _marketPlace2Context.SaveChangesAsync();
 
             return NoContent();
             

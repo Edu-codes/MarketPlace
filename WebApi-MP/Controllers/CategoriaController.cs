@@ -12,11 +12,11 @@ namespace WebApi_MP.Controllers
     public class CategoriaController : ControllerBase
     {
 
-        private readonly MarketPlaceContext _marketPlaceContext;
+        private readonly MarketPlace2Context _marketPlace2Context;
 
-        public CategoriaController(MarketPlaceContext marketPlaceContext)
+        public CategoriaController(MarketPlace2Context marketPlace2Context)
         {
-            _marketPlaceContext = marketPlaceContext;
+            _marketPlace2Context = marketPlace2Context;
 
         }
 
@@ -26,7 +26,7 @@ namespace WebApi_MP.Controllers
         [Route ("Lista")]
         public async Task<IActionResult> Lista()
         {
-            var Lista = await _marketPlaceContext.Categorias
+            var Lista = await _marketPlace2Context.Categorias
                 .Select(c => new CategoriaDTO
                 {
                     Id = c.Id,
@@ -54,8 +54,8 @@ namespace WebApi_MP.Controllers
 
             try
             {
-                _marketPlaceContext.Categorias.Add(modeloCategoria);
-                await _marketPlaceContext.SaveChangesAsync();
+                _marketPlace2Context.Categorias.Add(modeloCategoria);
+                await _marketPlace2Context.SaveChangesAsync();
                 return Ok(new { mensaje = "Categoria registrada exitosamente" });
             }
             catch (Exception ex) 
@@ -74,7 +74,7 @@ namespace WebApi_MP.Controllers
          
         public async Task<IActionResult> ActualizarCat(int id, CategoriaDTO objeto)
         {
-            var categoria = await _marketPlaceContext.Categorias.FindAsync(id);
+            var categoria = await _marketPlace2Context.Categorias.FindAsync(id);
 
             if (categoria == null) {
                 return NotFound("categoria no encontrada");
@@ -86,7 +86,7 @@ namespace WebApi_MP.Controllers
 
             try
             {
-                await _marketPlaceContext.SaveChangesAsync();
+                await _marketPlace2Context.SaveChangesAsync();
                 return Ok(new {mensaje = "Se a actualizado la categoria correctamente"});
 
             }
@@ -104,13 +104,13 @@ namespace WebApi_MP.Controllers
         public async Task<IActionResult> EliminarCat(int id)
         {
 
-            var tieneProductos = await _marketPlaceContext.Productos.AnyAsync(p => p.IdCat == id);
+            var tieneProductos = await _marketPlace2Context.Productos.AnyAsync(p => p.SubCategoriaId == id);
             if (tieneProductos)
             {
                 return BadRequest("No se puede eliminar la categoría porque tiene productos asociados.");
             }
 
-            var categoria = await _marketPlaceContext.Categorias.FindAsync(id);
+            var categoria = await _marketPlace2Context.Categorias.FindAsync(id);
 
             if (categoria == null)
             {
@@ -119,8 +119,8 @@ namespace WebApi_MP.Controllers
 
 
 
-            _marketPlaceContext.Categorias.Remove(categoria);
-            await _marketPlaceContext.SaveChangesAsync();
+            _marketPlace2Context.Categorias.Remove(categoria);
+            await _marketPlace2Context.SaveChangesAsync();
 
             
             return Ok(new { mensaje = "categoria Eliminada" });
