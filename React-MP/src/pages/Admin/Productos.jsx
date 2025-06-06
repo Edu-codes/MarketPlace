@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
+
+//Servicios
 import { getAllProductos, actualizarProducto, eliminarProducto } from "../../services/producto";
 import { getAllCategorias } from "../../services/categoria";
 import { getAllSubCategorias } from "../../services/subCategoria";
 import { getAllUnidadMedida } from "../../services/unidadMedida";
+import { getAllEstado } from "../../services/estado";
+
+
 import FormularioProductoModal from "../../components/Formularios/FormUpdateProduct";
 
 import Swal from "sweetalert2";
@@ -23,27 +28,43 @@ const ProductosAdmin = () => {
     const [categorias, setCategorias] = useState([]);
     const [subCategorias, setSubCategorias] = useState([]);
     const [unidadMedida, setUnidadMedida] = useState([]);
+    const [estado, setEstado] = useState([]);
     const [busqueda, setBusqueda] = useState("");
 
 
     const [formData, setFormData] = useState({
-        nombrePro: "",
-        precio: "",
-        cantidad: "",
-        idCat: "",
-        subcatId: "",
-        unidadId: "",
+        NombrePro: "",
+        Precio: "",
+        Stock: "",
+        // idCat: "",
+        SubCategoriaId: "",
+        UniMedId: "",
+        EstadoId: "",
+        Descripcion: ""
     });
 
     const [productoSeleccionado, setProductoSeleccionado] = useState(null);
     const [mostrarModal, setMostrarModal] = useState(false);
 
+    useEffect(() => {
+        const obtenerEstados = async () => {
+            try {
+                const data = await getAllEstado()
+                setEstado(data)
+                console.log("estados:", data)
+            } catch (error) {
+                console.log("Error al traer los estados", error)
+            }
+        }
+        obtenerEstados();
+    }, [])
 
     useEffect(() => {
         const obtenerUnidadMedida = async () => {
             try {
                 const data = await getAllUnidadMedida()
                 setUnidadMedida(data)
+                console.log("unidad me", data)
             } catch (error) {
                 console.log("Error al cargar unidades de medida", error)
             }
@@ -83,6 +104,7 @@ const ProductosAdmin = () => {
             try {
                 const data = await getAllProductos();
                 setProductos(data);
+                console.log("pro", data)
             } catch (error) {
                 console.error("Error cargando productos:", error);
             }
@@ -100,17 +122,14 @@ const ProductosAdmin = () => {
     // Manejar guardar el producto
     const handleGuardar = async () => {
 
-
-
         try {
             const datosAEnviar = { ...formData };
 
             console.log("Enviando a API:", formData);
             // No eliminar idCat aunque no cambie
-            await actualizarProducto(productoSeleccionado.id, datosAEnviar);
+            await actualizarProducto(productoSeleccionado.referencia, datosAEnviar);
             setMostrarModal(false);
             const data = await getAllProductos();
-
 
             Swal.fire({
                 icon: 'success',
@@ -124,22 +143,20 @@ const ProductosAdmin = () => {
             alert("no pueden haber campos vacios :)")
             console.error("Error al guardar el producto", error);
         }
-
-
-
-
     };
 
     // Manejar el clic en una fila para seleccionar un producto
     const handleFilaClick = (producto) => {
         console.log("datos en click fila:", producto)
         setFormData({
-            nombrePro: producto.nombrePro,
-            precio: producto.precio,
-            cantidad: producto.cantidad,
-            idCat: producto.idCat ? producto.idCat.toString() : "",
-            subcatId: producto.subcatId ? producto.subcatId.toString() : "",
-            unidadId: producto.unidadId ? producto.unidadId.toString() : "",
+            Referencia: producto.referencia,
+            NombrePro: producto.nombrePro,
+            Precio: parseFloat(producto.precio), // Usa parseFloat si es decimal
+            Stock: parseInt(producto.stock),
+            SubCategoriaId: producto.subCategoriaId ? parseInt(producto.subCategoriaId) : null,
+            UniMedId: producto.uniMedId ? parseInt(producto.uniMedId) : null,
+            EstadoId: producto.estadoId ? parseInt(producto.estadoId) : null,
+            Descripcion: producto.descripcion,
         });
         setProductoSeleccionado(producto);
 
@@ -196,12 +213,10 @@ const ProductosAdmin = () => {
 
     }
 
-
     // Cerrar el modal sin guardar cambios
     const handleCerrarModal = () => {
         setMostrarModal(false);
     };
-
 
     return (
 
@@ -224,40 +239,44 @@ const ProductosAdmin = () => {
 
             <div style={{ padding: 10 }}>
 
-
                 <TableContainer component={Paper} elevation={3}>
                     <Table>
                         <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                             <TableRow>
-                                <TableCell><b>ID</b></TableCell>
+                                <TableCell><b>Referencia</b></TableCell>
                                 <TableCell><b>Nombre</b></TableCell>
                                 <TableCell><b>Precio</b></TableCell>
                                 <TableCell><b>Cantidad</b></TableCell>
                                 <TableCell><b>Categoría</b></TableCell>
                                 <TableCell><b>SubCat</b></TableCell>
                                 <TableCell><b>Unidad Medida</b></TableCell>
+                                <TableCell><b>Estado</b></TableCell>
+                                <TableCell><b>Detalle</b></TableCell>
+                                
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {productos.filter((producto) =>
                                 producto.nombrePro.toLowerCase().includes(busqueda.toLowerCase()) ||
-                                producto.id?.toString().includes(busqueda) && !isNaN(busqueda) || (producto.unidadMedida?.toLowerCase() || "").includes(busqueda.toLowerCase())
+                                producto.Referencia?.toString().includes(busqueda) && !isNaN(busqueda) || (producto.unidadMedida?.toLowerCase() || "").includes(busqueda.toLowerCase())
 
                             )
                                 .map((producto) => (
                                     <TableRow
-                                        key={producto.id}
+                                        key={producto.referencia}
                                         hover
                                         onClick={() => handleFilaClick(producto)}
                                         sx={{ cursor: 'pointer' }}
                                     >
-                                        <TableCell>{producto.id}</TableCell>
+                                        <TableCell>{producto.referencia}</TableCell>
                                         <TableCell>{producto.nombrePro}</TableCell>
                                         <TableCell>{producto.precio}</TableCell>
-                                        <TableCell>{producto.cantidad}</TableCell>
-                                        <TableCell>{producto.nombreCat}</TableCell>
-                                        <TableCell>{producto.nombreSubCat}</TableCell>
-                                        <TableCell>{producto.unidadMedida}</TableCell>
+                                        <TableCell>{producto.stock}</TableCell>
+                                        <TableCell>{producto.nameCategoria}</TableCell>
+                                        <TableCell>{producto.nameSubCategoria}</TableCell>
+                                        <TableCell>{producto.nameUniMed}</TableCell>
+                                        <TableCell>{producto.nameEstado}</TableCell>
+                                        <TableCell>{producto.descripcion}</TableCell>
                                     </TableRow>
                                 ))}
                         </TableBody>
@@ -271,6 +290,7 @@ const ProductosAdmin = () => {
                         categorias={categorias}
                         subCategorias={subCategorias}
                         unidadMedida={unidadMedida}
+                        estado={estado}
                         handleChange={handleChange}
                         handleGuardar={handleGuardar}
                         handleCerrarModal={handleCerrarModal}
