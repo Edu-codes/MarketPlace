@@ -11,9 +11,11 @@ public partial class SubCategoria
 
     public int CategoriaId { get; set; }
 
-    public string? CategoriaName { get; set; }
-
-    public virtual ICollection<Producto> Productos { get; set; } = new List<Producto>();
+    public int? EstadoId { get; set; }
 
     public virtual Categoria Categoria { get; set; } = null!;
+
+    public virtual Estado? Estado { get; set; }
+
+    public virtual ICollection<Producto> Productos { get; set; } = new List<Producto>();
 }

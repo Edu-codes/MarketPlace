@@ -12,4 +12,8 @@ public partial class Foto
     public string? ImageableId { get; set; }
 
     public string ImageableType { get; set; } = null!;
+
+    public int? EstadoId { get; set; }
+
+    public virtual Estado? Estado { get; set; }
 }

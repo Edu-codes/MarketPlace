@@ -9,5 +9,5 @@ public partial class Role
 
     public string NombreRol { get; set; } = null!;
 
-    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+    public virtual ICollection<Usuario> Docs { get; set; } = new List<Usuario>();
 }

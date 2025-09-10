@@ -5,6 +5,6 @@
 
         public int Id { get; set; }
 
-        public string? NombreUnidadMedida { get; set; }
+        public string NombreUniMed { get; set; } = null!;
     }
 }

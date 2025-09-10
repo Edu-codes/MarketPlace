@@ -41,10 +41,9 @@ public partial class MarketPlace2Context : DbContext
 
     public virtual DbSet<Venta> Ventas { get; set; }
 
-    public virtual DbSet<VentasDetallada> VentasDetalladas { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
+        {
         modelBuilder.Entity<Categoria>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Categori__3213E83FF2637565");
@@ -63,6 +62,10 @@ public partial class MarketPlace2Context : DbContext
         modelBuilder.Entity<DetalleVenta>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__DetalleV__3213E83FBD2FA682");
+
+            entity.HasIndex(e => e.ProductoRef, "IX_DetalleVentas_productoRef");
+
+            entity.HasIndex(e => e.VentaId, "IX_DetalleVentas_ventaId");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Cantidad).HasColumnName("cantidad");
@@ -91,12 +94,17 @@ public partial class MarketPlace2Context : DbContext
 
             entity.Property(e => e.Nombre)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .HasColumnName("nombre");
         });
 
         modelBuilder.Entity<Favorito>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Favorito__3213E83F6AD3D323");
+
+            entity.HasIndex(e => e.Doc, "IX_Favoritos_doc");
+
+            entity.HasIndex(e => e.Referencia, "IX_Favoritos_referencia");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Doc).HasColumnName("doc");
@@ -140,11 +148,16 @@ public partial class MarketPlace2Context : DbContext
         {
             entity.HasKey(e => e.Referencia).HasName("PK__Producto__85C4EB32A30EE0D0");
 
+            entity.HasIndex(e => e.EstadoId, "IX_Productos_estadoId");
+
+            entity.HasIndex(e => e.SubCategoriaId, "IX_Productos_subCategoriaId");
+
+            entity.HasIndex(e => e.UniMedId, "IX_Productos_uniMedId");
+
             entity.Property(e => e.Referencia)
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("referencia");
-            entity.Property(e => e.SubCategoriaId).HasColumnName("subCategoriaId");
             entity.Property(e => e.Descripcion)
                 .HasMaxLength(255)
                 .IsUnicode(false)
@@ -158,16 +171,17 @@ public partial class MarketPlace2Context : DbContext
                 .HasColumnName("nombrePro");
             entity.Property(e => e.Precio).HasColumnName("precio");
             entity.Property(e => e.Stock).HasColumnName("stock");
+            entity.Property(e => e.SubCategoriaId).HasColumnName("subCategoriaId");
             entity.Property(e => e.UniMedId).HasColumnName("uniMedId");
+
+            entity.HasOne(d => d.Estado).WithMany(p => p.Productos)
+                .HasForeignKey(d => d.EstadoId)
+                .HasConstraintName("FK__Productos__estad__48CFD27E");
 
             entity.HasOne(d => d.SubCategoria).WithMany(p => p.Productos)
                 .HasForeignKey(d => d.SubCategoriaId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Productos__subCat__49C3F6B7");
-
-            entity.HasOne(d => d.Estado).WithMany(p => p.Productos)
-                .HasForeignKey(d => d.EstadoId)
-                .HasConstraintName("FK__Productos__estad__48CFD27E");
 
             entity.HasOne(d => d.UniMed).WithMany(p => p.Productos)
                 .HasForeignKey(d => d.UniMedId)
@@ -178,6 +192,10 @@ public partial class MarketPlace2Context : DbContext
         modelBuilder.Entity<Promocione>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Promocio__3213E83FCA392F73");
+
+            entity.HasIndex(e => e.EstadoId, "IX_Promociones_estadoId");
+
+            entity.HasIndex(e => e.Referencia, "IX_Promociones_referencia");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Descuento).HasColumnName("descuento");
@@ -215,6 +233,8 @@ public partial class MarketPlace2Context : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK__SubCateg__3213E83F8AB6F876");
 
+            entity.HasIndex(e => e.CategoriaId, "IX_SubCategorias_categoriaId");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CategoriaId).HasColumnName("categoriaId");
             entity.Property(e => e.NombreSubCat)
@@ -240,7 +260,7 @@ public partial class MarketPlace2Context : DbContext
         });
 
         modelBuilder.Entity<UserRole>()
-            .HasKey(ur => new { ur.Doc, ur.RolId });
+      .HasKey(ur => new { ur.Doc, ur.RolId });
 
         modelBuilder.Entity<UserRole>()
             .ToTable("UserRoles");
@@ -258,7 +278,6 @@ public partial class MarketPlace2Context : DbContext
             .HasConstraintName("FK_UserRoles_Roles");
 
 
-
         modelBuilder.Entity<Usuario>(entity =>
         {
             entity.HasKey(e => e.Doc).HasName("PK__Usuarios__D87601412868CB95");
@@ -270,6 +289,7 @@ public partial class MarketPlace2Context : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("apellido");
+            entity.Property(e => e.Direccion).HasColumnName("direccion");
             entity.Property(e => e.Email)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -292,7 +312,9 @@ public partial class MarketPlace2Context : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK__Ventas__3213E83F65B4EFD4");
 
-            entity.ToTable(tb => tb.HasTrigger("DescontarStock"));
+            entity.HasIndex(e => e.Doc, "IX_Ventas_doc");
+
+            entity.HasIndex(e => e.EstadoId, "IX_Ventas_estadoId");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Doc).HasColumnName("doc");
@@ -310,28 +332,6 @@ public partial class MarketPlace2Context : DbContext
             entity.HasOne(d => d.Estado).WithMany(p => p.Venta)
                 .HasForeignKey(d => d.EstadoId)
                 .HasConstraintName("FK__Ventas__estadoId__4E88ABD4");
-        });
-
-        modelBuilder.Entity<VentasDetallada>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("VentasDetalladas");
-
-            entity.Property(e => e.Cantidad).HasColumnName("cantidad");
-            entity.Property(e => e.Cliente)
-                .HasMaxLength(101)
-                .IsUnicode(false);
-            entity.Property(e => e.Estado)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.FechaVenta).HasColumnName("fechaVenta");
-            entity.Property(e => e.PrecioUnitario).HasColumnName("precioUnitario");
-            entity.Property(e => e.Producto)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.Subtotal).HasColumnName("subtotal");
-            entity.Property(e => e.Total).HasColumnName("total");
         });
 
         OnModelCreatingPartial(modelBuilder);
