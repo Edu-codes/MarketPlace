@@ -8,6 +8,8 @@ import { useState, useEffect } from "react";
 import { CountCantidad } from "../../components/CountCantidad";
 import BtnAgregarAlCarrito from "../../components/Button/BtnAgregarAlCarrito";
 
+
+
 const iconButtonStyle = {
     width: "48px",
     height: "48px",
@@ -24,11 +26,10 @@ const iconButtonStyle = {
     },
 };
 
-export default function CardProducto({ precio, nombre, product }) {
+export default function CardProducto({ precio, nombre, product, imagenes }) {
     const [cantidad, setCantidad] = useState(0)
 
-
-    //Renderizamos la cantidad
+    //Renderizamos la cantidad en el LocalStorage
     useEffect(() => {
         const user = JSON.parse(sessionStorage.getItem('user'));
         if (!user || !user.doc) return;
@@ -36,25 +37,22 @@ export default function CardProducto({ precio, nombre, product }) {
         const key = `cart_${user.doc}`;
         const carrito = JSON.parse(localStorage.getItem(key)) || [];
 
-        const productoEnCarrito = carrito.find(item => item.id === product.id);
+        const productoEnCarrito = carrito.find(item => item.referencia === product.referencia);
 
         if (productoEnCarrito) {
             setCantidad(productoEnCarrito.cantidad);
         } else {
-            setCantidad(0); 
+            setCantidad(0);
         }
 
     }, [product.id]);
 
 
-
+    //Agrega productos al carrito
     const handleAgregarAlCarrito = () => {
+        let cantidadFinal = cantidad === 0 ? 1 : cantidad;
 
-        let cantidadFinal = cantidad === -1 ? 1 : cantidad;
-
-
-        setCantidad(cantidadFinal)
-
+        setCantidad(cantidadFinal);
 
         const user = JSON.parse(sessionStorage.getItem('user'));
         if (!user || !user.doc) {
@@ -65,15 +63,19 @@ export default function CardProducto({ precio, nombre, product }) {
         const key = `cart_${user.doc}`;
         const carritoActual = JSON.parse(localStorage.getItem(key)) || [];
 
-        const indexExistente = carritoActual.findIndex(item => item.id === product.id);
+        console.log("Producto que intento agregar:", product);
+        console.log("ID del producto:", product.referencia);
+        console.log("Carrito actual:", carritoActual);
+
+        const indexExistente = carritoActual.findIndex(item => item.referencia === product.referencia);
 
         let nuevoCarrito;
         if (indexExistente !== -1) {
-            // Ya existe -> actualizamos cantidad
+            // Ya existe -> sumamos cantidad
             carritoActual[indexExistente].cantidad = cantidadFinal;
-            nuevoCarrito = carritoActual;
+            nuevoCarrito = [...carritoActual];
         } else {
-            // No existe -< agregamos nuevo
+            // No existe -> agregamos producto con cantidad
             const items = {
                 ...product,
                 cantidad: cantidadFinal,
@@ -81,9 +83,8 @@ export default function CardProducto({ precio, nombre, product }) {
             nuevoCarrito = [...carritoActual, items];
         }
 
-
-        //Evitamos que se agregue al carrito un prodcuto sin cantidad
-        if (cantidadFinal !== -1 && cantidadFinal !== 0) {
+        // Evitamos agregar productos con cantidad inválida
+        if (cantidadFinal > 0) {
             localStorage.setItem(key, JSON.stringify(nuevoCarrito));
         }
         console.log("Carrito actualizado:", nuevoCarrito);
@@ -94,13 +95,17 @@ export default function CardProducto({ precio, nombre, product }) {
 
 
 
+    const imagenPrincipal = imagenes.find(
+        (img) => img.imageableId === product.referencia && img.estadoId === 3
+    );
+
     return (
         <>
             <Box
                 sx={{
                     backgroundColor: "#fff",
-                    maxWidth: "300px",
-                    p: "2rem 3rem",
+                    maxWidth: "100%",
+                    p: "1rem 1rem",
                     borderRadius: "0.5rem",
                     cursor: "pointer",
                     boxShadow: "0 0 4px rgba(0,0,0,0.1)",
@@ -115,15 +120,15 @@ export default function CardProducto({ precio, nombre, product }) {
 
                 {/* Imagen */}
                 <Box sx={{ position: "relative", width: "100%", height: "10rem", transition: "transform 0.3s ease", }}>
+
                     <img
-                        src="/Arroz.jpg"
-                        alt="Arroz"
+                        src={imagenPrincipal ? `https://localhost:44369/${imagenPrincipal.ruta}` : "/placeholder.jpg"}
+                        alt={product.nombrePro}
                         style={{
                             width: "100%",
                             height: "100%",
                             borderRadius: "0.5rem",
                             objectFit: "cover",
-
                         }}
                     />
 
@@ -142,7 +147,6 @@ export default function CardProducto({ precio, nombre, product }) {
                             padding: "0.3rem",
                             borderBottomLeftRadius: "0.5rem",
                             borderBottomRightRadius: "0.5rem",
-
                         }}
                     >
                         ${precio}

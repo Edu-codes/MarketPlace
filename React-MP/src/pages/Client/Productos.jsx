@@ -1,6 +1,8 @@
 import { getAllProductos } from "../../services/producto";
 import { useState, useEffect } from "react";
-import { Box} from "@mui/material";
+import { Box } from "@mui/material";
+
+import { getAllFotos } from "../../services/foto";
 
 import CardProducto from "../../components/Usuarios/CardProducto";
 
@@ -8,9 +10,47 @@ import CardProducto from "../../components/Usuarios/CardProducto";
 export default function ProductosCliente() {
 
     const [productos, setProductos] = useState([])
+    const [imagenes, setImagenes] = useState([])
+    const [imagenesPorId, setImagenesPorId] = useState([])
+
+    //Traemos las imagenes
+    //Traemos las imagenes
+    // useEffect(() => {
+    //     const obtenerFotosPorId = async () => {
+    //         try {
+    //             const data = await fotoPorId(productos.referencia)
+    //             setImagenesPorId(data)
+    //             console.log("Imagnees:" , data)
+
+    //         } catch (error) {
+    //             console.log("error al traer imaenes", error)
+    //         }
+    //     }
+    //     obtenerFotosPorId
+    // },[])
 
 
+    //Traemos las imagenes
+    useEffect(() => {
+        const obtenerFotos = async () => {
+            try {
+                const data = await getAllFotos()
+                setImagenes(data)
+                console.log("Imagnees:", data)
 
+            } catch (error) {
+                console.log("error al traer imaenes", error)
+            }
+        }
+        obtenerFotos()
+    }, [])
+
+    useEffect(() => {
+        console.log("imagenes actualizado:", imagenes);
+    }, [imagenes]);
+
+
+    //traemos productos 
     useEffect(() => {
 
         const traerProductos = async () => {
@@ -29,8 +69,6 @@ export default function ProductosCliente() {
 
     return (
         <>
-
-
             <Box
                 sx={{
                     padding: '2rem',
@@ -39,13 +77,15 @@ export default function ProductosCliente() {
                     gap: '1rem',
                 }}
             >
+
                 {productos.map((product) => (
-                    
+
                     <CardProducto
-                        key={product.id}
+                        key={product.referencia}
                         precio={product.precio}
-                        nombre = {product.nombrePro}
-                        product = {product}
+                        nombre={product.nombrePro}
+                        product={product}
+                        imagenes={imagenes}
                     />
                 ))}
             </Box >
