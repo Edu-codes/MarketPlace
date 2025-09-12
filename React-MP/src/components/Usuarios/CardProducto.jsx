@@ -50,7 +50,7 @@ export default function CardProducto({ precio, nombre, product, imagenes }) {
 
     //Agrega productos al carrito
     const handleAgregarAlCarrito = () => {
-        let cantidadFinal = cantidad === 0 ? 1 : cantidad;
+        let cantidadFinal = cantidad === -1 ? 1 : cantidad;
 
         setCantidad(cantidadFinal);
 
@@ -71,22 +71,42 @@ export default function CardProducto({ precio, nombre, product, imagenes }) {
 
         let nuevoCarrito;
         if (indexExistente !== -1) {
-            // Ya existe -> sumamos cantidad
-            carritoActual[indexExistente].cantidad = cantidadFinal;
-            nuevoCarrito = [...carritoActual];
+            if (cantidadFinal === 0) {
+                const confirmar = window.confirm(
+                    `La cantidad es 0. ¿Quieres eliminar "${product.nombrePro}" del carrito?`
+                );
+
+                if (confirmar) {
+                    // Eliminamos el producto
+                    carritoActual.splice(indexExistente, 1);
+                    nuevoCarrito = [...carritoActual];
+                } else {
+                    // Si no confirma, dejamos el carrito como estaba
+                    nuevoCarrito = [...carritoActual];
+                }
+            } else {
+                // Ya existe -> actualizamos cantidad
+                carritoActual[indexExistente].cantidad = cantidadFinal;
+                nuevoCarrito = [...carritoActual];
+            }
+
         } else {
-            // No existe -> agregamos producto con cantidad
-            const items = {
-                ...product,
-                cantidad: cantidadFinal,
-            };
-            nuevoCarrito = [...carritoActual, items];
+            if (cantidadFinal > 0) {
+                // No existe -> agregamos producto
+                const items = {
+                    ...product,
+                    cantidad: cantidadFinal,
+                };
+                nuevoCarrito = [...carritoActual, items];
+            } else {
+                // Si intentan agregar con 0 y no existe, no hacemos nada
+                nuevoCarrito = [...carritoActual];
+            }
         }
 
         // Evitamos agregar productos con cantidad inválida
-        if (cantidadFinal > 0) {
-            localStorage.setItem(key, JSON.stringify(nuevoCarrito));
-        }
+
+        localStorage.setItem(key, JSON.stringify(nuevoCarrito));
         console.log("Carrito actualizado:", nuevoCarrito);
 
         // 🔔 Dispara un evento personalizado
