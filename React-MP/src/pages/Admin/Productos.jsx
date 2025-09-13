@@ -7,6 +7,8 @@ import { getAllSubCategorias } from "../../services/subCategoria";
 import { getAllUnidadMedida } from "../../services/unidadMedida";
 import { getAllEstado } from "../../services/estado";
 
+import { crearFoto } from "../../services/foto";
+import { fotoPorId } from "../../services/foto";
 
 import FormularioProductoModal from "../../components/Formularios/FormUpdateProduct";
 
@@ -30,9 +32,11 @@ const ProductosAdmin = () => {
     const [unidadMedida, setUnidadMedida] = useState([]);
     const [estado, setEstado] = useState([]);
     const [busqueda, setBusqueda] = useState("");
+    const [fotoProductos, setFotoProductos] = useState([])
 
 
     const [formData, setFormData] = useState({
+        Referencia: "",
         NombrePro: "",
         Precio: "",
         Stock: "",
@@ -46,6 +50,7 @@ const ProductosAdmin = () => {
     const [productoSeleccionado, setProductoSeleccionado] = useState(null);
     const [mostrarModal, setMostrarModal] = useState(false);
 
+    //Obtenemos estados
     useEffect(() => {
         const obtenerEstados = async () => {
             try {
@@ -59,6 +64,7 @@ const ProductosAdmin = () => {
         obtenerEstados();
     }, [])
 
+    //Traer datos unidad de medida
     useEffect(() => {
         const obtenerUnidadMedida = async () => {
             try {
@@ -72,6 +78,7 @@ const ProductosAdmin = () => {
         obtenerUnidadMedida();
     }, [])
 
+    //Trae datos de SubCategorias
     useEffect(() => {
         const obtenerSubCategorias = async () => {
             try {
@@ -113,7 +120,47 @@ const ProductosAdmin = () => {
         obtenerProductos();
     }, []);
 
-    // Manejar cambios en el formulario
+
+
+    useEffect(() => {
+        if (formData?.Referencia) {
+            handleFotosPorId(); // solo si hay id
+        }
+    }, [formData.Referencia]);
+
+    //cargar las fotos del producto seleccionado
+    const handleFotosPorId = async () => {
+        try {
+            const response = await fotoPorId(formData.Referencia);
+            setFotoProductos(response); // <- Forzamos cambio de estado
+            console.log(response)
+        } catch (error) {
+            console.error("Error recargando fotos", error);
+        }
+    };
+
+    //Agregar nueva imagen para producto
+    const handleNuevaImagen = async (event) => {
+        const file = event.target.files[0];
+
+        if (file) {
+            try {
+                const formDataToSend = new FormData();
+                formDataToSend.append("file", file); // nombre esperado en el backend
+                formDataToSend.append("imageableId", formData.Referencia);
+                formDataToSend.append("imageableType", formData.NombrePro);
+
+                await crearFoto(formDataToSend); // debe hacer un POST multipart/form-data
+                handleFotosPorId();
+
+            } catch (error) {
+                alert("No pueden haber campos vacíos :)");
+                console.error("Error al subir la imagen", error);
+            }
+        }
+    };
+
+    // Manejar cambios en el formulaio
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
@@ -121,7 +168,6 @@ const ProductosAdmin = () => {
 
     // Manejar guardar el producto
     const handleGuardar = async () => {
-
         try {
             const datosAEnviar = { ...formData };
 
@@ -163,6 +209,8 @@ const ProductosAdmin = () => {
         setMostrarModal(true); // Abrir el modal cuando se selecciona la fila
     };
 
+
+    //Eliminar productos
     const handleEliminar = async () => {
 
         setMostrarModal(false)
@@ -252,7 +300,7 @@ const ProductosAdmin = () => {
                                 <TableCell><b>Unidad Medida</b></TableCell>
                                 <TableCell><b>Estado</b></TableCell>
                                 <TableCell><b>Detalle</b></TableCell>
-                                
+
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -289,8 +337,11 @@ const ProductosAdmin = () => {
                         formData={formData}
                         categorias={categorias}
                         subCategorias={subCategorias}
+                        fotoProductos={fotoProductos}
+                        cargarFotos={handleFotosPorId}
                         unidadMedida={unidadMedida}
                         estado={estado}
+                        handleNuevaImagen={handleNuevaImagen}
                         handleChange={handleChange}
                         handleGuardar={handleGuardar}
                         handleCerrarModal={handleCerrarModal}
