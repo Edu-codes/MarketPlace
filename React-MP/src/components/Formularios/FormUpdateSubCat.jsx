@@ -11,6 +11,10 @@ import {
     FormControl,
 } from '@mui/material';
 
+import BtnFotos from '../Button/Admin/BtnFoto';
+import { fotoPorId } from '../../services/foto';
+import { useState, useEffect } from 'react';
+
 const styleModal = {
     position: 'absolute',
     top: '50%',
@@ -24,18 +28,46 @@ const styleModal = {
 };
 
 
-const FormUpdateSubCat = ({ handleCerrarModal, handleChange, handleGuardar, formData, categoria }) => {
+const FormUpdateSubCat = ({ handleCerrarModal, handleNuevaImagen, handleChange, handleGuardar, formData, categoria, fotoSubCat, cargarFotos }) => {
 
     return (
         <>
 
             <Modal open={true} onClose={handleCerrarModal}>
+
+
                 <Box sx={styleModal}>
                     <Typography variant="h6" component="h2" gutterBottom>
                         Editar SubCategoria
                     </Typography>
 
+                    <Button
+                        variant="contained"
+                        component="label"
+                        color="primary"
+                    >
+                        <input
+                            type="file"
+                            hidden
+                            onChange={handleNuevaImagen}
 
+                        />
+                        Subir Foto
+                    </Button>
+                    {/* {sendFoto && (
+
+                        <img
+                            src={foto}
+                            alt="Arroz"
+                            style={{
+                                width: "50%",
+                                height: "50%",
+                                borderRadius: "0.5rem",
+                                objectFit: "cover",
+                                cursor: "pointer"
+                            }}
+                        />
+                    )}  */}
                     <TextField
                         fullWidth
                         label="Nombre"
@@ -50,8 +82,8 @@ const FormUpdateSubCat = ({ handleCerrarModal, handleChange, handleGuardar, form
                     <FormControl fullWidth margin="normal">
                         <InputLabel>Categoria</InputLabel>
                         <Select
-                            name="idCat"
-                            value={formData.idCat || ''}
+                            name="categoriaId"
+                            value={formData.categoriaId || ''}
                             onChange={handleChange}
                             label="Categoria"
                         >
@@ -64,7 +96,13 @@ const FormUpdateSubCat = ({ handleCerrarModal, handleChange, handleGuardar, form
                         </Select>
                     </FormControl>
 
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+
+
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                        <BtnFotos
+                            fotosPorId={fotoSubCat} // ✅ este sí es el array de fotos
+                            recargarFotos={cargarFotos}// si necesitas recargar después de eliminar
+                        />
                         <Button variant="contained" color="primary" onClick={handleGuardar} sx={{ mr: 1 }}>
                             Guardar
                         </Button>
@@ -82,6 +120,5 @@ const FormUpdateSubCat = ({ handleCerrarModal, handleChange, handleGuardar, form
     )
 
 }
-
 
 export default FormUpdateSubCat
