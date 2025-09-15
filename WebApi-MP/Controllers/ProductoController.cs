@@ -29,10 +29,9 @@ namespace WebApi_MP.Controllers
 
         public async Task<IActionResult> Lista()
         {
-
             var lista = await _marketPlace2Context.Productos
                 .Include(p => p.SubCategoria)
-                .Include(p => p.UniMedId)
+                .Include(p => p.UniMed)
                 .Include(p => p.Estado)
 
                 .Select(p => new ProductoDTO
@@ -41,8 +40,13 @@ namespace WebApi_MP.Controllers
                     NombrePro = p.NombrePro,
                     Precio = p.Precio,
                     Stock = p.Stock,
-                    NameSubCategoria = p.SubCategoria!.NombreSubCat,
+                    NameSubCategoria = p.SubCategoria.NombreSubCat,
+                    SubCategoriaId = p.SubCategoria.Id,
+                    IdCategoria = p.SubCategoria.Categoria.Id,
+                    UniMedId = p.UniMed.Id,
+                    NameCategoria = p.SubCategoria.Categoria.NombreCat,
                     NameUniMed = p.UniMed.NombreUniMed,
+                    EstadoId = p.Estado!.Id,
                     NameEstado = p.Estado!.Nombre,
                     Descripcion = p.Descripcion,
                 })
@@ -96,6 +100,7 @@ namespace WebApi_MP.Controllers
                     Stock = u.Stock,
                     NameSubCategoria = u.SubCategoria!.NombreSubCat,
                     NameUniMed = u.UniMed.NombreUniMed,
+                    EstadoId = u.Estado!.Id,
                     NameEstado = u.Estado!.Nombre,
                     Descripcion = u.Descripcion,
                 });
@@ -184,18 +189,17 @@ namespace WebApi_MP.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpPut]
-        [Route("ActualizarProducto/{id}")]
-        public async Task<IActionResult> ActualizarProducto(int id, ProductoDTO objeto)
+        [Route("ActualizarProducto/{Referencia}")]
+        public async Task<IActionResult> ActualizarProducto(string referencia, ProductoUpdateDTO objeto)
         {
-            var productoExistente = await _marketPlace2Context.Productos.FindAsync(id);
+            var productoExistente = await _marketPlace2Context.Productos.FindAsync(referencia);
 
             if (productoExistente == null)
             {
                 return NotFound(new { mensaje = "Producto no encontrado" });
             }
 
-            // Actualizar los campos
-            productoExistente.Referencia = objeto.Referencia;
+            // Actualizar los campos permitidos
             productoExistente.NombrePro = objeto.NombrePro;
             productoExistente.Precio = objeto.Precio;
             productoExistente.Stock = objeto.Stock;
