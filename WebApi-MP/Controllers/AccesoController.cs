@@ -50,6 +50,7 @@ namespace WebApi_MP.Controllers
                Doc = objeto.Doc,
                RolId = 2,       
             };
+
             if (usuarioExiste)
             {
                 return Conflict(new { status = 409, mensaje = "El usuario ya tiene una cuenta registrada" });
@@ -76,12 +77,12 @@ namespace WebApi_MP.Controllers
         {
 
             var usuarioEncontrado = await _marketPlace2Context.Usuarios
-                .Include(u => u.UserRoles)
-                 .ThenInclude(ur => ur.Rol)
-                .Where(u =>
-                u.Doc == objeto.Doc &&
-                u.Pass == _utilidades.encriptarSHA256(objeto.Password)
-                ).FirstOrDefaultAsync();
+           .Include(u => u.UserRoles)
+               .ThenInclude(ur => ur.Rol)
+           .Where(u =>
+               u.Doc == objeto.Doc &&
+               u.Pass == _utilidades.encriptarSHA256(objeto.Password))
+           .FirstOrDefaultAsync();
 
             if (usuarioEncontrado == null)
             {
@@ -89,10 +90,8 @@ namespace WebApi_MP.Controllers
             }
             else
             {
-
                 var token = _utilidades.generarJWT(usuarioEncontrado);
                 var roles = usuarioEncontrado.UserRoles.Select(ur => ur.Rol.NombreRol).ToList();
-
                 var userData = new UsuarioDTO
                 {
                     Doc = usuarioEncontrado.Doc,
