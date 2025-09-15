@@ -26,7 +26,7 @@ namespace WebApi_MP.Controllers
             var modeloSubCat = new SubCategoria
             {
                 NombreSubCat = objeto.NombreSubCat,
-                CategoriaId = objeto.idCat,
+                CategoriaId = objeto.CategoriaId,
             };
 
             try
@@ -50,13 +50,13 @@ namespace WebApi_MP.Controllers
         public async Task<IActionResult> Lista()
         {
             var lista = await _marketPlace2Context.SubCategorias
-                .Include(x => x.CategoriaId)
+                .Include(x => x.Categoria)
                 .Select(x => new SubCategoriaDTO
                 {
                     Id = x.Id,
                     NombreSubCat = x.NombreSubCat,
-                    idCat = x.CategoriaId,
-                    NombreCat = x.Categoria.NombreCat,
+                    CategoriaId = x.Categoria.Id,
+                    NameCategoria = x.Categoria.NombreCat,
                 }).ToListAsync();
 
             if(lista == null || !lista.Any())
@@ -81,7 +81,7 @@ namespace WebApi_MP.Controllers
             }
 
             SubCatRegistrada.NombreSubCat = objeto.NombreSubCat;
-            SubCatRegistrada.CategoriaId = objeto.idCat;
+            SubCatRegistrada.CategoriaId = objeto.CategoriaId;
 
 
             try
