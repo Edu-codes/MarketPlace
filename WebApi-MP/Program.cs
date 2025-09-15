@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
 using WebApi_MP.Custom;
 using WebApi_MP.Models;
 
@@ -14,8 +16,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen();
 
 
@@ -49,12 +52,11 @@ builder.Services.AddAuthentication(config =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("NewPolicy", app =>
-    {
-        app.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-    });
-}
-);
+    options.AddPolicy("AllowFrontend",
+        policy => policy.WithOrigins("http://localhost:5173")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+});
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
@@ -87,8 +89,19 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors("NewPolicy");
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
+
+
+app.UseStaticFiles(); // para servir archivos de wwwroot por defecto
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "uploads")),
+    RequestPath = "/uploads"
+});
+
 
 app.UseAuthorization();
 
