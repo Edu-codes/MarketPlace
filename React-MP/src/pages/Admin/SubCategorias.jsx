@@ -2,6 +2,9 @@ import { useEffect, useState } from "react"
 import { getAllSubCategorias, actualizarSubCategoria } from "../../services/subCategoria"
 import { getAllCategorias } from "../../services/categoria";
 import FormUpdateSubCat from "../../components/Formularios/FormUpdateSubCat";
+import { crearFoto, getAllFotos, fotoPorId } from "../../services/foto";
+
+import Swal from "sweetalert2";
 
 
 import {
@@ -17,22 +20,32 @@ import {
 
 
 const SubCategorias = () => {
-
     const [busqueda, setBusqueda] = useState("");
     const [mostrarModal, setMostrarModal] = useState(false)
     const [subCatSeleccionada, setSubCatSeleccionada] = useState(null)
+    //guarda las categorias
     const [categoria, setCategoria] = useState([])
-
+    //guarda las subcategorias
     const [subCategoria, setSubCategorias] = useState([])
+    //guarda las fotos por id SubCat
+    const [fotoSubCat, setFotoSubCat] = useState([])
+    //guarda todas las fotos
+    const [foto, setFoto] = useState([])
+
+    const [formDataFoto, setFormDataFoto] = useState({
+        ruta: "",
+        imageableId: "",
+        imageableType: ""
+    });
+
     const [formData, setFormData] = useState({
         id: "",
         nombreSubCat: "",
-        nombreCat: "",
-        idCat: "",
+        nameCategoria: "",
+        categoriaId: "",
     });
 
-
-    //traemos Cattegoris
+    //traemos Categorias
     useEffect(() => {
         const listaCategorias = async () => {
             try {
@@ -49,8 +62,7 @@ const SubCategorias = () => {
         listaCategorias()
     }, []);
 
-
-    //Trameos Subcategoris
+    //Trameos Subcategorias
     useEffect(() => {
 
         const ListaSubCategorias = async () => {
@@ -64,8 +76,20 @@ const SubCategorias = () => {
         }
 
         ListaSubCategorias();
-
     }, []);
+
+    //traemos todas las fotos
+    useEffect(() => {
+        const listaDeFotos = async () => {
+            try {
+                const data = await getAllFotos()
+                setFoto(data)
+            } catch (error) {
+                console.log("Error al cargar las fotos", error);
+            }
+            listaDeFotos()
+        }
+    }, [])
 
     //seleccionamis fila de la tabla
     const handleFilaTabla = (subCat) => {
@@ -74,23 +98,21 @@ const SubCategorias = () => {
         setFormData({
             id: subCat.id,
             nombreSubCat: subCat.nombreSubCat,
-            idCat: subCat.idCat,
-            nombreCat: subCat.nombreCat
+            categoriaId: subCat.categoriaId,
+            nameCategoria: subCat.nameCategoria
         });
         setSubCatSeleccionada(subCat)
 
         setMostrarModal(true)
     };
 
-    //Actualizar SubCat
-
-    // Manejar guardar el producto
+    //Actualizar datos SubCat
     const handleGuardar = async () => {
         try {
             const datosAEnviar = { ...formData };
 
-            console.log("Enviando a API:", formData);
-            // No eliminar idCat aunque no cambie
+            console.log("Enviando a API:", datosAEnviar);
+            // No eliminar idCat aunx|que no cambie
             await actualizarSubCategoria(subCatSeleccionada.id, datosAEnviar);
             setMostrarModal(false);
             const data = await getAllSubCategorias();
@@ -100,6 +122,49 @@ const SubCategorias = () => {
             console.error("Error al actualizar SubCat", error);
         }
     };
+
+    useEffect(() => {
+        if (formData?.id) {
+            handleFotosPorId(); // solo si hay id
+        }
+    }, [formData.id]);
+
+    //cargar las fotos por id
+    const handleFotosPorId = async () => {
+        try {
+            const response = await fotoPorId(formData.id);
+
+            setFotoSubCat(response); // <- Forzamos cambio de estado
+        } catch (error) {
+            console.error("Error recargando fotos", error);
+        }
+    };
+
+
+    //Agregar imagen nueva a subcat
+    const handleNuevaImagen = async (event) => {
+
+        const file = event.target.files[0];
+        console.log("file", file)
+
+        if (file) {
+            try {
+
+                const formDataToSend = new FormData();
+
+                formDataToSend.append("file", file);
+                formDataToSend.append("imageableId", formData.id);
+                formDataToSend.append("imageableType", formData.nameCategoria);
+
+                await crearFoto(formDataToSend)
+                handleFotosPorId()
+
+            } catch (error) {
+                alert("no pueden haber campos vacios :)")
+                console.error("Error al actualizar foto", error);
+            }
+        }
+    }
 
     // Manejar cambios en el formulario
     const handleChange = (e) => {
@@ -111,12 +176,9 @@ const SubCategorias = () => {
         setMostrarModal(false)
     }
 
-
     return (
 
         <>
-
-
             <h1 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "16px" }}>SubCategorias</h1>
             <input
                 type="text"
@@ -142,7 +204,7 @@ const SubCategorias = () => {
                             <TableRow>
                                 <TableCell>Id</TableCell>
                                 <TableCell>Sub Categoria</TableCell>
-                                <TableCell>Categoria</TableCell>
+                                <TableCell>Nombre Categoria</TableCell>
                             </TableRow>
                         </TableHead>
 
@@ -162,7 +224,7 @@ const SubCategorias = () => {
                                     >
                                         <TableCell>{subCat.id}</TableCell>
                                         <TableCell>{subCat.nombreSubCat}</TableCell>
-                                        <TableCell>{subCat.nombreCat}</TableCell>
+                                        <TableCell>{subCat.nameCategoria}</TableCell>
                                     </TableRow>
                                 ))}
                         </TableBody>
@@ -175,11 +237,14 @@ const SubCategorias = () => {
                         subCategoria={formData}
                         categoria={categoria}
                         formData={formData}
+                        fotoSubCat={fotoSubCat}
+                        cargarFotos={handleFotosPorId}
+                        rutaFoto={formDataFoto.ruta}
                         handleCerrarModal={handleCerrarModal}
                         handleChange={handleChange}
                         handleGuardar={handleGuardar}
+                        handleNuevaImagen={handleNuevaImagen}
                     />
-
                 )}
             </div>
 
