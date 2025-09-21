@@ -36,16 +36,25 @@ namespace WebApi_MP.Custom
         public string generarJWT(Usuario modelo)
         {
             //Crear la informacion del usuario para token
-            var userClaims = new[]
+            var userClaims = new List<Claim>
+                {
+                   new Claim(ClaimTypes.NameIdentifier, modelo.Doc.ToString()),
+                   new Claim(ClaimTypes.Name, $"{modelo.Nombre} {modelo.Apellido}")
+
+                };  
+
+
+            // Agregar los roles como claims
+            foreach (var rolUsuario in modelo.UserRoles)
             {
-                new Claim(ClaimTypes.NameIdentifier,modelo.Doc.ToString()),
-                new Claim(ClaimTypes.Name, $"{modelo.Nombre} {modelo.Apellido}")
+                if (rolUsuario.Rol != null)
+                {
+                    userClaims.Add(new Claim(ClaimTypes.Role, rolUsuario.Rol.NombreRol));
+                }
             };
-            
+
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configurarion["jwt:key"]!));
-            var credentials = new SigningCredentials(securityKey,SecurityAlgorithms.HmacSha256Signature);
-
-
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
             //Crear detalle del token
 
             var jwtConfig = new JwtSecurityToken(
