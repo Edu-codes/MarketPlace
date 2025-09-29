@@ -28,7 +28,7 @@ namespace WebApi_MP.Controllers
                 .Select(x => new UnidadesMedidumDTO
                 {
                     Id = x.Id,
-                    NombreUnidadMedida = x.NombreUniMed,
+                    NombreUniMed = x.NombreUniMed,
                 }).ToListAsync();
 
             if(lista == null || !lista.Any()){
