@@ -155,7 +155,7 @@ const Footer = () => {
         }}
       >
         <Typography variant="body2" sx={{ fontSize: "1.1rem" }}>
-          Desarrollado por Juan Camilo & Daniel Eduardo
+          Desarrollado por Daniel Gamboa 
         </Typography>
       </Box>
     </Box>

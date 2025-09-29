@@ -88,7 +88,7 @@ export default function HeaderCliente() {
                         {/* Menú */}
                         <Box component="ul" sx={{ display: 'flex', listStyle: 'none', gap: '1.5rem', m: 0, p: 0, fontWeight: 'bold' }}>
 
-                            <li><MuiLink onClick={() => handleNavigation('')} underline="none" color="text.primary" sx={{
+                            <li><MuiLink onClick={() => handleNavigation('Inicio')} underline="none" color="text.primary" sx={{
                                 display: 'flex',
                                 alignItems: 'center',
                                 height: '100%',
