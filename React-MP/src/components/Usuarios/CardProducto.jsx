@@ -3,6 +3,10 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
+//alertas
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { useState, useEffect } from "react";
 
 import { CountCantidad } from "../../components/CountCantidad";
@@ -88,6 +92,10 @@ export default function CardProducto({ precio, nombre, product, imagenes }) {
                 // Ya existe -> actualizamos cantidad
                 carritoActual[indexExistente].cantidad = cantidadFinal;
                 nuevoCarrito = [...carritoActual];
+                toast.success(`Cantidad de "${product.nombrePro}" actualizada correctamente`, {
+                    position: "bottom-left",
+                    autoClose: 3000,
+                });
             }
 
         } else {
@@ -98,11 +106,16 @@ export default function CardProducto({ precio, nombre, product, imagenes }) {
                     cantidad: cantidadFinal,
                 };
                 nuevoCarrito = [...carritoActual, items];
+                toast.success(`Producto "${product.nombrePro}" agregado correctamente`, {
+                    position: "bottom-left",
+                });
+
             } else {
                 // Si intentan agregar con 0 y no existe, no hacemos nada
                 nuevoCarrito = [...carritoActual];
             }
         }
+
 
         // Evitamos agregar productos con cantidad inválida
 
@@ -242,7 +255,9 @@ export default function CardProducto({ precio, nombre, product, imagenes }) {
                         onClick={handleAgregarAlCarrito}
                     />
                 </Box>
+                <ToastContainer />
             </Box>
+
 
         </>
     )
