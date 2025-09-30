@@ -8,6 +8,7 @@ import { Navigate } from 'react-router'
 
 import InactivityLogout from './components/Utilidades/InactivityLogout'
 
+
 //Rutas Admin
 import Inicio from './pages/Admin/Inicio'
 import Categorias from './pages/Admin/Categorias'
@@ -20,6 +21,7 @@ import ClientLayout from './layouts/Client/ClientLayout'
 import ProductosCliente from './pages/Client/Productos'
 import CategoriasCliente from './pages/Client/Categorias'
 import InicioCliente from './pages/Client/Inicio'
+import PortalPagos from './pages/Client/PortalPagos'
 
 import { Routes, Route } from 'react-router'
 import { Box } from '@mui/material'
@@ -50,16 +52,16 @@ function App() {
             <Route path="SubCategorias" element={<SubCategorias />} />
           </Route>
 
-          <Route path="/Client" element={
-            <ProtectedRoute allowedRoles={['Cliente']}>
-              <ClientLayout />
-            </ProtectedRoute>
-          }>
-            <Route path="Inicio" element={<InicioCliente />} />
-            <Route path="Productos" element={<ProductosCliente />} />
-            <Route path="Categorias" element={<CategoriasCliente />} />
-          </Route>
-
+            <Route path="/Client" element={
+              <ProtectedRoute allowedRoles={['Cliente']}>
+                <ClientLayout />
+              </ProtectedRoute>
+            }>
+              <Route path="Inicio" element={<InicioCliente />} />
+              <Route path="Productos" element={<ProductosCliente />} />
+              <Route path="Categorias" element={<CategoriasCliente />} />
+              <Route path="PortalPagos" element={<PortalPagos />} />
+            </Route>
           {/* Ruta de acceso denegado */}
           <Route path="/unauthorized" element={<Unauthorized />} />
 
