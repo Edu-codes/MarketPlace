@@ -10,7 +10,7 @@ const style = {
   transform: 'translate(-50%, -50%)',
   maxWidth: '100%',
   bgcolor: 'background.paper',
-  border: '2px solid #000',
+  border: '1px solid #000',
   boxShadow: 24,
   pt: 2,
   px: 4,
@@ -24,10 +24,10 @@ export default function ModalUsuario({ isOpen, onClose, title, children }) {
       onClose={onClose}
       aria-labelledby="parent-modal-title"
       aria-describedby="parent-modal-description"
-      sx={{ minWidth: '100%' }}
+      sx={{ minWidth: '100%'}}
     >
       <Box sx={{ ...style }}>
-        <Button onClick={onClose} style={{ float: 'right' }}>X</Button>
+        <Button onClick={onClose} style={{ float: 'right' }}> X </Button>
         <h2 id="parent-modal-title">{title}</h2>
         <div id="parent-modal-description">{children}</div>
       </Box>
