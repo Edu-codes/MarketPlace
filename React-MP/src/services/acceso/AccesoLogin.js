@@ -24,7 +24,7 @@ export const loginUser = async (doc, password) => {
     } else {
       console.error('Error al actualizar el producto:', error);
     }
-    throw error.response?.data || { message: 'Error al iniciar sesión' };
+    throw error.response?.data || { message: "Error al consumir el servicio" };
   }
 };
 
