@@ -86,7 +86,7 @@ namespace WebApi_MP.Controllers
 
             if (usuarioEncontrado == null)
             {
-                return StatusCode(StatusCodes.Status200OK, new { isSuccess = false, token = "" });
+                return StatusCode( StatusCodes.Status200OK, new { isSuccess = false, token = "" });
             }
             else
             {
