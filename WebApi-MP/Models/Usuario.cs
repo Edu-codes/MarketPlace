@@ -21,9 +21,15 @@ public partial class Usuario
 
     public int? EstadoId { get; set; }
 
+    public int? TipoDocumento { get; set; }
+
     public virtual ICollection<Favorito> Favoritos { get; set; } = new List<Favorito>();
+
+    public virtual TipoDocumento TipoDocumentoNavigation { get; set; } = null!;
 
     public virtual ICollection<Venta> Venta { get; set; } = new List<Venta>();
 
     public virtual ICollection<Role> Rols { get; set; } = new List<Role>();
+
+    public virtual ICollection<Tienda> Tienda { get; set; } = new List<Tienda>();
 }

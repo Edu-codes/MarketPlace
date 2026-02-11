@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using WebApi_MP.Models;
 
-namespace WebApi_MP.Models;
+namespace WebApi_MP.Data;
 
 public partial class MarketPlace2Context : DbContext
 {
@@ -19,8 +18,6 @@ public partial class MarketPlace2Context : DbContext
 
     public virtual DbSet<DetalleVenta> DetalleVentas { get; set; }
 
-    public virtual DbSet<DocumentosTiendum> DocumentosTienda { get; set; }
-
     public virtual DbSet<Estado> Estados { get; set; }
 
     public virtual DbSet<Favorito> Favoritos { get; set; }
@@ -34,15 +31,7 @@ public partial class MarketPlace2Context : DbContext
     public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<UserRole> UserRoles { get; set; }
-
-
     public virtual DbSet<SubCategoria> SubCategorias { get; set; }
-
-    public virtual DbSet<Tienda> Tiendas { get; set; }
-
-    public virtual DbSet<TipoDocumento> TipoDocumentos { get; set; }
-
-    public virtual DbSet<TiposDocumento> TiposDocumentos { get; set; }
 
     public virtual DbSet<UnidadesMedidum> UnidadesMedida { get; set; }
 
@@ -51,8 +40,8 @@ public partial class MarketPlace2Context : DbContext
     public virtual DbSet<Venta> Ventas { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=Eduardo;Database=MarketPlace2;Trusted_Connection=True;TrustServerCertificate=True;");
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=Eduardo;Database=MarketPlace2;Trusted_Connection=True;TrustServercertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -103,25 +92,6 @@ public partial class MarketPlace2Context : DbContext
                 .HasForeignKey(d => d.VentaId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__DetalleVe__venta__534D60F1");
-        });
-
-        modelBuilder.Entity<DocumentosTiendum>(entity =>
-        {
-            entity.HasKey(e => e.DocumentoId).HasName("PK__Document__5DDBFC76BDAE32EB");
-
-            entity.Property(e => e.ArchivoUrl).HasMaxLength(300);
-            entity.Property(e => e.FechaSubida)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-
-            entity.HasOne(d => d.Tienda).WithMany(p => p.DocumentosTienda)
-                .HasForeignKey(d => d.TiendaId)
-                .HasConstraintName("FK_DocumentosTienda_Tiendas");
-
-            entity.HasOne(d => d.TipoDocumento).WithMany(p => p.DocumentosTienda)
-                .HasForeignKey(d => d.TipoDocumentoId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_DocumentosTienda_TiposDocumento");
         });
 
         modelBuilder.Entity<Estado>(entity =>
@@ -272,17 +242,7 @@ public partial class MarketPlace2Context : DbContext
                 .HasColumnName("nombreRol");
         });
 
-        modelBuilder.Entity<UserRole>()
-            .HasKey(ur => new { ur.Doc, ur.RolId });
-        modelBuilder.Entity<UserRole>()
-            .HasOne(ur => ur.Usuario)
-            .WithMany(u => u.UserRoles)
-            .HasForeignKey(ur => ur.Doc);
 
-        modelBuilder.Entity<UserRole>()
-            .HasOne(ur => ur.Rol)
-            .WithMany(r => r.UserRoles)
-            .HasForeignKey(ur => ur.RolId);
 
         modelBuilder.Entity<SubCategoria>(entity =>
         {
@@ -306,53 +266,6 @@ public partial class MarketPlace2Context : DbContext
             entity.HasOne(d => d.Estado).WithMany(p => p.SubCategoria)
                 .HasForeignKey(d => d.EstadoId)
                 .HasConstraintName("FK_SubCategorias_Estados");
-        });
-
-        modelBuilder.Entity<Tienda>(entity =>
-        {
-            entity.HasKey(e => e.IdTienda).HasName("PK__Tiendas__5A1EB96BE6A2C2B0");
-
-            entity.Property(e => e.Barrio).HasMaxLength(200);
-            entity.Property(e => e.Direccion).HasMaxLength(200);
-            entity.Property(e => e.Estado).HasDefaultValue(1);
-            entity.Property(e => e.FechaCreacion)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.Nombre).HasMaxLength(150);
-            entity.Property(e => e.Telefono).HasMaxLength(50);
-            entity.Property(e => e.TipoDocumento).HasDefaultValue(3);
-
-            entity.HasOne(d => d.TipoDocumentoNavigation).WithMany(p => p.Tienda)
-                .HasForeignKey(d => d.TipoDocumento)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Tiendas_TipoDocumento");
-        });
-
-        modelBuilder.Entity<TipoDocumento>(entity =>
-        {
-            entity.HasKey(e => e.IdTipoDocumento).HasName("PK__TipoDocu__3AB3332FB103C647");
-
-            entity.ToTable("TipoDocumento");
-
-            entity.Property(e => e.Codigo)
-                .HasMaxLength(10)
-                .IsUnicode(false);
-            entity.Property(e => e.Nombre)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-        });
-
-        modelBuilder.Entity<TiposDocumento>(entity =>
-        {
-            entity.HasKey(e => e.TipoDocumentoId).HasName("PK__TiposDoc__A329EA8793E6A49A");
-
-            entity.ToTable("TiposDocumento");
-
-            entity.HasIndex(e => e.Nombre, "UQ__TiposDoc__75E3EFCF2E160167").IsUnique();
-
-            entity.Property(e => e.Activo).HasDefaultValue(true);
-            entity.Property(e => e.Descripcion).HasMaxLength(200);
-            entity.Property(e => e.Nombre).HasMaxLength(50);
         });
 
         modelBuilder.Entity<UnidadesMedidum>(entity =>
@@ -382,9 +295,7 @@ public partial class MarketPlace2Context : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("email");
-            entity.Property(e => e.EstadoId)
-                .HasDefaultValue(3)
-                .HasColumnName("estadoId");
+            entity.Property(e => e.EstadoId).HasColumnName("estadoId");
             entity.Property(e => e.Nombre)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -397,29 +308,8 @@ public partial class MarketPlace2Context : DbContext
                 .HasMaxLength(11)
                 .IsUnicode(false)
                 .HasColumnName("telefono");
-            entity.Property(e => e.TipoDocumento).HasDefaultValue(1);
 
-            entity.HasOne(d => d.TipoDocumentoNavigation).WithMany(p => p.Usuarios)
-                .HasForeignKey(d => d.TipoDocumento)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Usuarios_TipoDocumento");
 
-     
-
-            entity.HasMany(d => d.Tienda).WithMany(p => p.Usuarios)
-                .UsingEntity<Dictionary<string, object>>(
-                    "UsuarioTienda",
-                    r => r.HasOne<Tienda>().WithMany()
-                        .HasForeignKey("TiendaId")
-                        .HasConstraintName("FK_UsuarioTiendas_Tiendas"),
-                    l => l.HasOne<Usuario>().WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .HasConstraintName("FK_UsuarioTiendas_Usuarios"),
-                    j =>
-                    {
-                        j.HasKey("UsuarioId", "TiendaId");
-                        j.ToTable("UsuarioTiendas");
-                    });
         });
 
         modelBuilder.Entity<UserRole>()
@@ -437,6 +327,7 @@ public partial class MarketPlace2Context : DbContext
         .HasOne(ur => ur.Rol)
         .WithMany(r => r.UserRoles)
         .HasForeignKey(ur => ur.RolId);
+
 
         modelBuilder.Entity<Venta>(entity =>
         {
