@@ -11,19 +11,20 @@ public partial class Tienda
 
     public string Nombre { get; set; } = null!;
 
-    public string? Direccion { get; set; }
+    public string Direccion { get; set; } = null!;
 
-    public string? Barrio { get; set; }
+    public string Barrio { get; set; } = null!;
 
-    public string? Telefono { get; set; }
+    public string Telefono { get; set; } = null!;
+
+    public string Ciudad { get; set; } = null!;
 
     public int Estado { get; set; }
 
     public DateTime FechaCreacion { get; set; }
 
-    public virtual ICollection<DocumentosTiendum> DocumentosTienda { get; set; } = new List<DocumentosTiendum>();
-
     public virtual TipoDocumento TipoDocumentoNavigation { get; set; } = null!;
 
-    public virtual ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();
+    public virtual ICollection<SubCategoria> SubCategoria { get; set; } = new List<SubCategoria>();
 }
+    

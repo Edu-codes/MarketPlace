@@ -82,33 +82,33 @@ namespace WebApi_MP.Controllers
         }
 
 
-        [HttpGet]
-        [Route("ProductoPorSubCategoria")]
+        //[HttpGet]
+        //[Route("ProductoPorSubCategoria")]
 
-        public async Task<ActionResult<Producto>> ProductoPorSubCategoria(int subcatId)
-        {
-            var producto = _marketPlace2Context.Productos
-                .Include(p => p.SubCategoria)
-                .Include(p => p.UniMed)
-                .Include(p => p.Estado)
-                .Where(u => u.SubCategoriaId == subcatId)
-                .Select(u => new ProductoDTO
-                {
-                    Referencia = u.Referencia,
-                    NombrePro = u.NombrePro,
-                    Precio = u.Precio,
-                    Stock = u.Stock,
-                    NameSubCategoria = u.SubCategoria!.NombreSubCat,
-                    NameUniMed = u.UniMed.NombreUniMed,
-                    EstadoId = u.Estado!.Id,
-                    NameEstado = u.Estado!.Nombre,
-                    Descripcion = u.Descripcion,
-                });
+        //public async Task<ActionResult<Producto>> ProductoPorSubCategoria(int subcatId)
+        //{
+        //    var producto = _marketPlace2Context.Productos
+        //        .Include(p => p.SubCategoria)
+        //        .Include(p => p.UniMed)
+        //        .Include(p => p.Estado)
+        //        .Where(u => u.SubCategoriaId == subcatId)
+        //        .Select(u => new ProductoDTO
+        //        {
+        //            Referencia = u.Referencia,
+        //            NombrePro = u.NombrePro,
+        //            Precio = u.Precio,
+        //            Stock = u.Stock,
+        //            NameSubCategoria = u.SubCategoria!.NombreSubCat,
+        //            NameUniMed = u.UniMed.NombreUniMed,
+        //            EstadoId = u.Estado!.Id,
+        //            NameEstado = u.Estado!.Nombre,
+        //            Descripcion = u.Descripcion,
+        //        });
 
-            if (!producto.Any())
-                return NotFound("No hay productos en esta subcategoria");
-            return Ok(producto);
-        }
+        //    if (!producto.Any())
+        //        return NotFound("No hay productos en esta subcategoria");
+        //    return Ok(producto);
+        //}
 
 
         //[HttpGet]
@@ -185,8 +185,8 @@ namespace WebApi_MP.Controllers
             {
                 return BadRequest(new { mensaje = "Error al registrar Producto", error = ex.Message });
             }
-
         }
+
         [Authorize(Roles = "Admin")]
         [HttpPut]
         [Route("ActualizarProducto/{Referencia}")]

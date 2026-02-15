@@ -18,4 +18,6 @@ public partial class SubCategoria
     public virtual Estado? Estado { get; set; }
 
     public virtual ICollection<Producto> Productos { get; set; } = new List<Producto>();
+
+    public virtual ICollection<Tienda> Tienda { get; set; } = new List<Tienda>();
 }
